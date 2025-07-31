@@ -46,7 +46,7 @@
 
           <!-- Access Point Settings -->
           <v-card class="pa-3 mb-4" color="#0f1419" v-if="appStore.appSettings.wifi.mode !== 'client'">
-            <v-card-subtitle class="text-white">Access Point Settings</v-card-subtitle>
+            <v-card-title class="text-white pa-0 mb-3">Access Point Settings</v-card-title>
             <v-row>
               <v-col cols="12" md="4">
                 <v-text-field
@@ -78,7 +78,7 @@
 
           <!-- Client Settings -->
           <v-card class="pa-3 mb-4" color="#0f1419" v-if="appStore.appSettings.wifi.mode !== 'ap'">
-            <v-card-subtitle class="text-white">Client Settings</v-card-subtitle>
+            <v-card-title class="text-white pa-0 mb-3">Client Settings</v-card-title>
             <v-row>
               <v-col cols="12" md="8">
                 <v-select
