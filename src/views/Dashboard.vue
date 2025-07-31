@@ -209,6 +209,9 @@ const connectionStatus = computed(() => {
 
 let timeInterval: NodeJS.Timeout
 
+// Добавить после импортов
+const debounceTimers = ref<{ [key: string]: NodeJS.Timeout }>({})
+
 const updateDateTime = () => {
   const now = new Date()
   const format = appStore.timeFormat === '12' ? {
@@ -397,12 +400,23 @@ const drawChart = () => {
   })
 }
 
-const updateManualBrightness = async (channelIndex: number, value: number) => {
-  try {
-    await appStore.setChannelBrightness(channelIndex, value)
-  } catch (error) {
-    console.error('Failed to update brightness:', error)
+// Заменить функцию updateManualBrightness на:
+const updateManualBrightness = (channelIndex: number, value: number) => {
+  // Очистить предыдущий таймер для этого канала
+  const timerKey = `manual-${channelIndex}`
+  if (debounceTimers.value[timerKey]) {
+    clearTimeout(debounceTimers.value[timerKey])
   }
+
+  // Установить новый таймер
+  debounceTimers.value[timerKey] = setTimeout(async () => {
+    try {
+      await appStore.setChannelBrightness(channelIndex, value)
+      console.log(`Channel ${channelIndex} brightness set to ${value}%`)
+    } catch (error) {
+      console.error('Failed to update brightness:', error)
+    }
+  }, 300) // 300ms задержка
 }
 
 const updateLampMode = async (mode: string) => {
@@ -413,12 +427,23 @@ const updateLampMode = async (mode: string) => {
   }
 }
 
-const updateSchedulePoint = async (index: number) => {
-  try {
-    await appStore.updateSchedulePoint(index, appStore.schedulePoints[index])
-  } catch (error) {
-    console.error('Failed to update schedule point:', error)
+// Заменить функцию updateSchedulePoint на:
+const updateSchedulePoint = (index: number) => {
+  // Очистить предыдущий таймер для этой точки расписания
+  const timerKey = `schedule-${index}`
+  if (debounceTimers.value[timerKey]) {
+    clearTimeout(debounceTimers.value[timerKey])
   }
+
+  // Установить новый таймер
+  debounceTimers.value[timerKey] = setTimeout(async () => {
+    try {
+      await appStore.updateSchedulePoint(index, appStore.schedulePoints[index])
+      console.log(`Schedule point ${index} updated`)
+    } catch (error) {
+      console.error('Failed to update schedule point:', error)
+    }
+  }, 500) // 500ms задержка для расписания
 }
 
 // Watch for time format changes and force component re-render
@@ -457,10 +482,16 @@ onMounted(() => {
   })
 })
 
+// В onUnmounted добавить очистку таймеров:
 onUnmounted(() => {
   if (timeInterval) {
     clearInterval(timeInterval)
   }
+
+  // Очистить все debounce таймеры
+  Object.values(debounceTimers.value).forEach(timer => {
+    if (timer) clearTimeout(timer)
+  })
 })
 </script>
 
