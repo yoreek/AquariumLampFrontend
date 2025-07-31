@@ -108,7 +108,6 @@
         <v-card class="pa-4" color="#16213e">
           <v-card-title class="text-white">
             Schedule Settings
-            <small class="ml-2">(Format: {{ appStore.timeFormat }}H)</small>
           </v-card-title>
           <v-row>
             <v-col v-for="(point, index) in appStore.schedulePoints" :key="`schedule-${index}-${componentKey}`" cols="12" md="6" xl="4">
@@ -210,11 +209,6 @@ const debounceTimers = ref<{ [key: string]: NodeJS.Timeout }>({})
 
 const updateDateTime = () => {
   const now = new Date()
-  const format = appStore.timeFormat === '12' ? {
-    hour12: true
-  } : {
-    hour12: false
-  }
 
   const dateStr = now.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -226,8 +220,7 @@ const updateDateTime = () => {
   const timeStr = now.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
-    ...format
+    second: '2-digit'
   })
 
   currentDateTime.value = `${dateStr}, ${timeStr}`
@@ -236,7 +229,6 @@ const updateDateTime = () => {
 const updateTimeValue = (index: number, value: string) => {
   console.log(`updateTimeValue: index=${index}, value=${value}`)
 
-  // Простая валидация формата HH:MM
   const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
   if (timeRegex.test(value)) {
     appStore.schedulePoints[index].time = value
@@ -282,9 +274,7 @@ const drawChart = () => {
   for (let i = 0; i <= 6; i++) {
     const x = (width / 6) * i
     const hour = i * 4
-    const timeLabel = appStore.timeFormat === '12'
-        ? appStore.convertTimeFormat(`${hour}:00`, true)
-        : `${hour}:00`
+    const timeLabel = `${hour}:00`  // Убрать конвертацию
     ctx.fillText(timeLabel, x, height - 5)
   }
 
@@ -386,18 +376,6 @@ const updateSchedulePoint = (index: number) => {
     }
   }, 500)
 }
-
-watch(
-    () => appStore.timeFormat,
-    (newFormat) => {
-      console.log('Dashboard: Time format changed to', newFormat)
-      componentKey.value++
-      updateDateTime()
-      setTimeout(() => {
-        drawChart()
-      }, 100)
-    }
-)
 
 watch(
     () => appStore.schedulePoints,

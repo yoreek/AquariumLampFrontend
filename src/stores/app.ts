@@ -35,9 +35,6 @@ export const useAppStore = defineStore("app", () => {
     })),
   })
 
-  // Simple reactive time format
-  const timeFormat = ref<"12" | "24">("24")
-
   // App settings storage
   const appSettings = ref<AppSettings>({
     wifi: {
@@ -57,8 +54,7 @@ export const useAppStore = defineStore("app", () => {
       time: new Date().toTimeString().split(" ")[0].substring(0, 5),
       autoSync: true,
       ntpServer: "pool.ntp.org",
-      timezone: "UTC",
-      format: "24",
+      timezone: "UTC"
     },
     device: {
       updateInterval: 5,
@@ -115,41 +111,7 @@ export const useAppStore = defineStore("app", () => {
     return "http://192.168.4.1"
   })
 
-  // Utility function to convert time format
-  const convertTimeFormat = (time24: string, to12Hour: boolean): string => {
-    if (!to12Hour) return time24
-
-    const [hours, minutes] = time24.split(":").map(Number)
-    const period = hours >= 12 ? "PM" : "AM"
-    const hours12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours
-    return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`
-  }
-
-  const convertTimeFrom12To24 = (time12: string): string => {
-    const match = time12.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
-    if (!match) return time12
-
-    const [, hours, minutes, period] = match
-    let hour24 = Number.parseInt(hours)
-
-    if (period.toUpperCase() === "PM" && hour24 !== 12) {
-      hour24 += 12
-    } else if (period.toUpperCase() === "AM" && hour24 === 12) {
-      hour24 = 0
-    }
-
-    return `${hour24.toString().padStart(2, "0")}:${minutes}`
-  }
-
-  // Function to change time format
-  const setTimeFormat = (format: "12" | "24") => {
-    console.log("Setting time format to:", format)
-    timeFormat.value = format
-    appSettings.value.time.format = format
-    console.log("Time format updated:", timeFormat.value)
-  }
-
-  // API helper function
+    // API helper function
   const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {
     const baseUrl = apiBaseUrl.value
     const url = `${baseUrl}${endpoint}`
@@ -365,7 +327,6 @@ export const useAppStore = defineStore("app", () => {
       if (response.wifi) appSettings.value.wifi = response.wifi
       if (response.time) {
         appSettings.value.time = response.time
-        timeFormat.value = response.time.format
       }
       if (response.device) appSettings.value.device = response.device
 
@@ -464,7 +425,6 @@ export const useAppStore = defineStore("app", () => {
     autoSync: boolean
     ntpServer: string
     timezone: string
-    format: "12" | "24"
   }) => {
     console.log("Updating time configuration", config)
 
@@ -472,8 +432,6 @@ export const useAppStore = defineStore("app", () => {
     appSettings.value.time.autoSync = config.autoSync
     appSettings.value.time.ntpServer = config.ntpServer
     appSettings.value.time.timezone = config.timezone
-    appSettings.value.time.format = config.format
-    timeFormat.value = config.format
 
     try {
       await makeApiCall("/api/time/config", {
@@ -493,18 +451,12 @@ export const useAppStore = defineStore("app", () => {
     scheduleSettings,
     appSettings,
     deviceInfo,
-    timeFormat,
 
     // Computed
     schedulePoints,
     lampMode,
     manualBrightness,
     apiBaseUrl,
-
-    // Utilities
-    convertTimeFormat,
-    convertTimeFrom12To24,
-    setTimeFormat,
 
     // Actions
     initializeApp,

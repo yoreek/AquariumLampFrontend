@@ -28,7 +28,6 @@ export interface TimeSettings {
   autoSync: boolean
   ntpServer: string
   timezone: string
-  format: "12" | "24"
 }
 
 export interface DeviceSettings {

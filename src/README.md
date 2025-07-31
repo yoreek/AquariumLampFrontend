@@ -10,7 +10,6 @@ A Vue.js web application for controlling an ESP32-based aquarium lamp with 5 LED
 - **Time Synchronization**: NTP time sync with timezone support
 - **Device Management**: Monitor device status, memory usage, and uptime
 - **Responsive Design**: Works on desktop and mobile devices
-- **12/24 Hour Format**: Toggle between time formats
 
 ## Technology Stack
 
@@ -292,8 +291,7 @@ Content-Type: application/json
 {
    "autoSync": true,
    "ntpServer": "pool.ntp.org",
-   "timezone": "UTC",
-   "format": "24"
+   "timezone": "UTC"
 }
 ```
 
@@ -384,8 +382,7 @@ GET /api/settings
         "time": "18:30",
         "autoSync": true,
         "ntpServer": "pool.ntp.org",
-        "timezone": "UTC",
-        "format": "24"
+        "timezone": "UTC"
     },
     "device": {
       "updateInterval": 5
@@ -433,9 +430,6 @@ If the ESP32 is unreachable, the app continues to work with cached data and show
 
 ### Optimistic Updates
 UI updates immediately when user makes changes, then syncs with the device. If sync fails, changes are reverted.
-
-### Time Format
-The app supports both 12-hour and 24-hour time formats. All API communication uses 24-hour format internally.
 
 ## Browser Compatibility
 

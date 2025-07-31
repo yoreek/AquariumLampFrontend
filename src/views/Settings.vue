@@ -221,21 +221,6 @@
             </v-col>
           </v-row>
 
-          <v-row class="mb-4">
-            <v-col cols="12">
-              <div class="text-white mb-2">Time Format (Current: {{ appStore.timeFormat }}H)</div>
-              <v-btn-toggle
-                  v-model="currentTimeFormat"
-                  color="primary"
-                  mandatory
-                  @update:model-value="handleTimeFormatChange"
-              >
-                <v-btn value="12">12 Hour</v-btn>
-                <v-btn value="24">24 Hour</v-btn>
-              </v-btn-toggle>
-            </v-col>
-          </v-row>
-
           <v-btn color="success" @click="saveTimeConfiguration" :loading="saving" block>
             Save Time Configuration
           </v-btn>
@@ -347,7 +332,6 @@ const saving = ref(false)
 const scanning = ref(false)
 const refreshing = ref(false)
 const rebooting = ref(false)
-const currentTimeFormat = ref(appStore.timeFormat)
 
 const settingTime = ref(false)
 const manualDate = ref(new Date().toISOString().split("T")[0])
@@ -429,8 +413,7 @@ const saveTimeConfiguration = async () => {
     await appStore.updateTimeConfiguration({
       autoSync: appStore.appSettings.time.autoSync,
       ntpServer: appStore.appSettings.time.ntpServer,
-      timezone: appStore.appSettings.time.timezone,
-      format: appStore.appSettings.time.format
+      timezone: appStore.appSettings.time.timezone
     })
   } catch (error) {
     console.error('Failed to save time configuration:', error)
@@ -478,12 +461,6 @@ const rebootDevice = async () => {
   } finally {
     rebooting.value = false
   }
-}
-
-const handleTimeFormatChange = (newFormat: "12" | "24") => {
-  console.log('Changing time format to:', newFormat)
-  currentTimeFormat.value = newFormat
-  appStore.setTimeFormat(newFormat)
 }
 
 onMounted(async () => {
