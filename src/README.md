@@ -265,26 +265,43 @@ GET /api/time/timezones
 }
 ```
 
-#### Configure Time Settings
+#### Set Manual Time
 ```http
-POST /api/time/config
+POST /api/time/set
 Content-Type: application/json
 
 {
-    "date": "2025-07-31",
-    "time": "18:30",
-    "autoSync": true,
-    "ntpServer": "pool.ntp.org",
-    "timezone": "UTC",
-    "format": "24"
+   "date": "2025-07-31",
+   "time": "18:30"
 }
 ```
 
 **Response:**
 ```json
 {
-    "success": true,
-    "message": "Time configuration updated"
+   "success": true,
+   "message": "Time set successfully"
+}
+```
+
+#### Configure Time Settings
+```http
+POST /api/time/config
+Content-Type: application/json
+
+{
+   "autoSync": true,
+   "ntpServer": "pool.ntp.org",
+   "timezone": "UTC",
+   "format": "24"
+}
+```
+
+**Response:**
+```json
+{
+   "success": true,
+   "message": "Time configuration updated"
 }
 ```
 

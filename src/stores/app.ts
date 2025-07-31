@@ -7,7 +7,6 @@ import type {
   DeviceInfo,
   SchedulePoint,
   WifiSettings,
-  TimeSettings,
   DeviceSettings,
 } from "./models"
 
@@ -157,15 +156,21 @@ export const useAppStore = defineStore("app", () => {
 
     console.log(`API call to ${url}`, options)
 
+    // Create AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
     try {
       const response = await fetch(url, {
-        timeout: 5000,
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           ...options.headers,
         },
         ...options,
       })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -175,6 +180,7 @@ export const useAppStore = defineStore("app", () => {
       isConnected.value = true
       return data
     } catch (error) {
+      clearTimeout(timeoutId)
       console.error(`API call failed:`, error)
       isConnected.value = false
       throw error
@@ -292,24 +298,6 @@ export const useAppStore = defineStore("app", () => {
       })
     } catch (error) {
       console.error("Failed to update WiFi settings:", error)
-      throw error
-    }
-  }
-
-  const updateTimeSettings = async (settings: TimeSettings) => {
-    console.log("Updating time settings", settings)
-
-    // Update local state immediately
-    appSettings.value.time = { ...settings }
-    timeFormat.value = settings.format
-
-    try {
-      await makeApiCall("/api/time/config", {
-        method: "POST",
-        body: JSON.stringify(settings),
-      })
-    } catch (error) {
-      console.error("Failed to update time settings:", error)
       throw error
     }
   }
@@ -458,6 +446,46 @@ export const useAppStore = defineStore("app", () => {
     }, appSettings.value.device.updateInterval * 1000)
   }
 
+  const setManualTime = async (timeData: { date: string; time: string }) => {
+    console.log("Setting manual time", timeData)
+
+    try {
+      await makeApiCall("/api/time/set", {
+        method: "POST",
+        body: JSON.stringify(timeData),
+      })
+    } catch (error) {
+      console.error("Failed to set manual time:", error)
+      throw error
+    }
+  }
+
+  const updateTimeConfiguration = async (config: {
+    autoSync: boolean
+    ntpServer: string
+    timezone: string
+    format: "12" | "24"
+  }) => {
+    console.log("Updating time configuration", config)
+
+    // Update local state immediately
+    appSettings.value.time.autoSync = config.autoSync
+    appSettings.value.time.ntpServer = config.ntpServer
+    appSettings.value.time.timezone = config.timezone
+    appSettings.value.time.format = config.format
+    timeFormat.value = config.format
+
+    try {
+      await makeApiCall("/api/time/config", {
+        method: "POST",
+        body: JSON.stringify(config),
+      })
+    } catch (error) {
+      console.error("Failed to update time configuration:", error)
+      throw error
+    }
+  }
+
   return {
     // State
     isConnected,
@@ -485,7 +513,8 @@ export const useAppStore = defineStore("app", () => {
     setLampMode,
     updateSchedulePoint,
     updateWifiSettings,
-    updateTimeSettings,
+    setManualTime,
+    updateTimeConfiguration,
     updateDeviceSettings,
     scanWifiNetworks,
     getDeviceInfo,

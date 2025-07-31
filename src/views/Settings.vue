@@ -128,34 +128,51 @@
       </v-col>
     </v-row>
 
-    <!-- Time & Synchronization -->
+    <!-- Manual Time Setting -->
     <v-row class="mb-4">
       <v-col cols="12">
         <v-card class="pa-4" color="#16213e">
-          <v-card-title class="text-white">Time & Synchronization</v-card-title>
+          <v-card-title class="text-white">Manual Time Setting</v-card-title>
 
           <v-row class="mb-4">
             <v-col cols="12" md="6">
               <v-text-field
-                  v-model="appStore.appSettings.time.date"
+                  v-model="manualDate"
                   label="Date"
                   type="date"
                   variant="outlined"
                   :disabled="appStore.appSettings.time.autoSync"
-                  @update:model-value="updateTimeSettings"
               />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
-                  v-model="appStore.appSettings.time.time"
+                  v-model="manualTime"
                   label="Time"
                   type="time"
                   variant="outlined"
                   :disabled="appStore.appSettings.time.autoSync"
-                  @update:model-value="updateTimeSettings"
               />
             </v-col>
           </v-row>
+
+          <v-btn
+              color="primary"
+              @click="setManualTime"
+              :loading="settingTime"
+              :disabled="appStore.appSettings.time.autoSync"
+              block
+          >
+            Set Time
+          </v-btn>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Time Configuration -->
+    <v-row class="mb-4">
+      <v-col cols="12">
+        <v-card class="pa-4" color="#16213e">
+          <v-card-title class="text-white">Time Configuration</v-card-title>
 
           <v-row class="mb-4">
             <v-col cols="12">
@@ -206,8 +223,8 @@
             </v-col>
           </v-row>
 
-          <v-btn color="success" @click="saveTimeSettings" :loading="saving" block>
-            Save Time Settings
+          <v-btn color="success" @click="saveTimeConfiguration" :loading="saving" block>
+            Save Time Configuration
           </v-btn>
         </v-card>
       </v-col>
@@ -319,6 +336,10 @@ const refreshing = ref(false)
 const rebooting = ref(false)
 const currentTimeFormat = ref(appStore.timeFormat)
 
+const settingTime = ref(false)
+const manualDate = ref(new Date().toISOString().split("T")[0])
+const manualTime = ref(new Date().toTimeString().split(" ")[0].substring(0, 5))
+
 const wifiModes = [
   { title: 'Access Point', value: 'ap' },
   { title: 'Client', value: 'client' },
@@ -382,19 +403,38 @@ const saveWifiSettings = async () => {
   }
 }
 
-const updateTimeSettings = () => {
-  // Settings are automatically updated in store
+const setManualTime = async () => {
+  settingTime.value = true
+  try {
+    await appStore.setManualTime({
+      date: manualDate.value,
+      time: manualTime.value
+    })
+  } catch (error) {
+    console.error('Failed to set manual time:', error)
+  } finally {
+    settingTime.value = false
+  }
 }
 
-const saveTimeSettings = async () => {
+const saveTimeConfiguration = async () => {
   saving.value = true
   try {
-    await appStore.updateTimeSettings(appStore.appSettings.time)
+    await appStore.updateTimeConfiguration({
+      autoSync: appStore.appSettings.time.autoSync,
+      ntpServer: appStore.appSettings.time.ntpServer,
+      timezone: appStore.appSettings.time.timezone,
+      format: appStore.appSettings.time.format
+    })
   } catch (error) {
-    console.error('Failed to save time settings:', error)
+    console.error('Failed to save time configuration:', error)
   } finally {
     saving.value = false
   }
+}
+
+const updateTimeSettings = () => {
+  // Settings are automatically updated in store
 }
 
 const updateDeviceSettings = () => {
