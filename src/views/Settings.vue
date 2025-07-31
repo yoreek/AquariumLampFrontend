@@ -193,9 +193,9 @@
 
           <v-row class="mb-4">
             <v-col cols="12">
-              <div class="text-white mb-2">Time Format</div>
+              <div class="text-white mb-2">Time Format (Current: {{ appStore.timeFormat }}H)</div>
               <v-btn-toggle
-                  v-model="appStore.timeFormat"
+                  v-model="currentTimeFormat"
                   color="primary"
                   mandatory
                   @update:model-value="handleTimeFormatChange"
@@ -273,8 +273,9 @@
           <v-row class="mb-4">
             <v-col cols="12">
               <v-text-field
-                  v-model="appStore.appSettings.device.apiEndpoint"
-                  label="API Endpoint"
+                  v-model="appStore.appSettings.device.updateInterval"
+                  label="Update Interval (seconds)"
+                  type="number"
                   variant="outlined"
                   @update:model-value="updateDeviceSettings"
               />
@@ -283,13 +284,8 @@
 
           <v-row class="mb-4">
             <v-col cols="12">
-              <v-text-field
-                  v-model="appStore.appSettings.device.updateInterval"
-                  label="Update Interval (seconds)"
-                  type="number"
-                  variant="outlined"
-                  @update:model-value="updateDeviceSettings"
-              />
+              <div class="text-white mb-2">Current API Endpoint:</div>
+              <div class="text-success">{{ appStore.apiBaseUrl }}</div>
             </v-col>
           </v-row>
 
@@ -321,6 +317,7 @@ const saving = ref(false)
 const scanning = ref(false)
 const refreshing = ref(false)
 const rebooting = ref(false)
+const currentTimeFormat = ref(appStore.timeFormat)
 
 const wifiModes = [
   { title: 'Access Point', value: 'ap' },
@@ -437,9 +434,10 @@ const rebootDevice = async () => {
   }
 }
 
-const handleTimeFormatChange = (newFormat: string) => {
-  appStore.appSettings.time.format = newFormat
-  updateTimeSettings()
+const handleTimeFormatChange = (newFormat: "12" | "24") => {
+  console.log('Changing time format to:', newFormat)
+  currentTimeFormat.value = newFormat
+  appStore.setTimeFormat(newFormat)
 }
 
 onMounted(async () => {

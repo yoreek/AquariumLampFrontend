@@ -187,11 +187,11 @@ const currentDateTime = ref('')
 const componentKey = ref(0)
 
 const channels = [
-  { name: 'White', color: '#ffffff' },
-  { name: 'Blue', color: '#2196f3' },
-  { name: 'Red', color: '#f44336' },
-  { name: 'Green', color: '#4caf50' },
-  { name: 'UV', color: '#9c27b0' }
+  { name: 'Blue', color: '#2196F3' },           // Синий
+  { name: 'Blue/Violet', color: '#673AB7' },    // Сине-фиолетовый
+  { name: 'Blue/Green', color: '#009688' },     // Сине-зеленый (бирюзовый)
+  { name: 'White', color: '#FFFFFF' },          // Белый
+  { name: 'White/Yellow/Magenta', color: '#FF69B4' } // Розово-пурпурный (Hot Pink)
 ]
 
 const connectionStatus = computed(() => {

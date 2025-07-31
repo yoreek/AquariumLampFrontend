@@ -32,7 +32,6 @@ export interface TimeSettings {
 }
 
 export interface DeviceSettings {
-  apiEndpoint: string
   updateInterval: number
 }
 
