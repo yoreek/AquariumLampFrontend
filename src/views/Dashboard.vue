@@ -6,11 +6,14 @@
         <v-card class="pa-4" color="#16213e">
           <v-row align="center">
             <v-col cols="auto">
-              <!-- Заменили на SVG иконку лампочки -->
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFC107">
-                <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
-              </svg>
-              <span class="text-h5 ml-2 text-white">Aquarium Lamp</span>
+              <v-row align="center" no-gutters class="ml-2">
+                <!-- Заменили на SVG иконку лампочки -->
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFC107">
+                  <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
+                </svg>
+                <span class="text-h5 ml-2 text-white">Aquarium Lamp</span>
+                <span class="text-caption ml-2 text-grey-darken-1">v{{ version }}</span>
+              </v-row>
             </v-col>
             <v-spacer />
             <v-col cols="auto">
@@ -181,6 +184,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useAppStore } from '../stores/app'
+import pkg from '../../package.json'
+
+const version = pkg.version
 
 const appStore = useAppStore()
 
