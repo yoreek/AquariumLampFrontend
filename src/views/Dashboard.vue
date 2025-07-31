@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-4">
+  <v-container fluid class="pa-4" :key="componentKey">
     <!-- Header -->
     <v-row class="mb-4">
       <v-col cols="12">
@@ -100,9 +100,12 @@
     <v-row>
       <v-col cols="12">
         <v-card class="pa-4" color="#16213e">
-          <v-card-title class="text-white">Schedule Settings</v-card-title>
+          <v-card-title class="text-white">
+            Schedule Settings
+            <small class="ml-2">(Format: {{ appStore.timeFormat }}H)</small>
+          </v-card-title>
           <v-row>
-            <v-col v-for="(point, index) in appStore.schedulePoints" :key="index" cols="12" md="6" xl="4">
+            <v-col v-for="(point, index) in appStore.schedulePoints" :key="`schedule-${index}-${componentKey}`" cols="12" md="6" xl="4">
               <v-card class="pa-3 mb-3" color="#0f1419">
                 <v-row align="center" class="mb-2">
                   <v-col cols="auto">
@@ -118,29 +121,18 @@
                     <span class="text-white font-weight-medium">{{ index + 1 }}</span>
                   </v-col>
                   <v-col>
-                    <!-- Time input with format support -->
-                    <div v-if="appStore.timeFormat === '24'">
-                      <v-text-field
-                          v-model="point.time"
-                          type="time"
-                          variant="outlined"
-                          density="compact"
-                          hide-details
-                          :disabled="!point.enabled"
-                          @update:model-value="updateSchedulePoint(index)"
-                      />
-                    </div>
-                    <div v-else>
-                      <v-text-field
-                          :model-value="appStore.convertTimeFormat(point.time, true)"
-                          variant="outlined"
-                          density="compact"
-                          hide-details
-                          :disabled="!point.enabled"
-                          placeholder="12:00 AM"
-                          @update:model-value="updateTimeIn12HourFormat(index, $event)"
-                      />
-                    </div>
+                    <!-- Always use text input to avoid browser time formatting -->
+                    <v-text-field
+                        :model-value="getDisplayTime(point.time)"
+                        type="text"
+                        variant="outlined"
+                        density="compact"
+                        hide-details
+                        :disabled="!point.enabled"
+                        :placeholder="appStore.timeFormat === '24' ? '06:00' : '6:00 AM'"
+                        @update:model-value="updateTimeValue(index, $event)"
+                        @blur="validateTimeInput(index, $event)"
+                    />
                   </v-col>
                 </v-row>
 
@@ -192,6 +184,7 @@ const appStore = useAppStore()
 
 const chartCanvas = ref<HTMLCanvasElement>()
 const currentDateTime = ref('')
+const componentKey = ref(0)
 
 const channels = [
   { name: 'White', color: '#ffffff' },
@@ -200,17 +193,6 @@ const channels = [
   { name: 'Green', color: '#4caf50' },
   { name: 'UV', color: '#9c27b0' }
 ]
-
-// Автоматически перерисовывать график при изменении расписания
-watch(
-    () => appStore.schedulePoints,
-    () => {
-      setTimeout(() => {
-        drawChart()
-      }, 50)
-    },
-    { deep: true }
-)
 
 const connectionStatus = computed(() => {
   if (appStore.isConnected) {
@@ -241,10 +223,55 @@ const updateDateTime = () => {
   })
 }
 
-const updateTimeIn12HourFormat = (index: number, time12: string) => {
-  const time24 = appStore.convertTimeFrom12To24(time12)
-  appStore.schedulePoints[index].time = time24
-  updateSchedulePoint(index)
+const getDisplayTime = (time24: string) => {
+  if (appStore.timeFormat === '24') {
+    return time24
+  } else {
+    return appStore.convertTimeFormat(time24, true)
+  }
+}
+
+const validateTimeInput = (index: number, event: Event) => {
+  const target = event.target as HTMLInputElement
+  const value = target.value
+
+  // Validate time format
+  if (appStore.timeFormat === '24') {
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
+    if (!timeRegex.test(value)) {
+      // Reset to original value if invalid
+      target.value = getDisplayTime(appStore.schedulePoints[index].time)
+      return
+    }
+  } else {
+    const timeRegex = /^(1[0-2]|[1-9]):[0-5][0-9]\s*(AM|PM)$/i
+    if (!timeRegex.test(value)) {
+      // Reset to original value if invalid
+      target.value = getDisplayTime(appStore.schedulePoints[index].time)
+      return
+    }
+  }
+}
+
+const updateTimeValue = (index: number, value: string) => {
+  console.log(`updateTimeValue: index=${index}, value=${value}, format=${appStore.timeFormat}`)
+
+  if (appStore.timeFormat === '24') {
+    // Validate 24-hour format
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
+    if (timeRegex.test(value)) {
+      appStore.schedulePoints[index].time = value
+      updateSchedulePoint(index)
+    }
+  } else {
+    // Validate 12-hour format and convert
+    const timeRegex = /^(1[0-2]|[1-9]):[0-5][0-9]\s*(AM|PM)$/i
+    if (timeRegex.test(value)) {
+      const time24 = appStore.convertTimeFrom12To24(value)
+      appStore.schedulePoints[index].time = time24
+      updateSchedulePoint(index)
+    }
+  }
 }
 
 const drawChart = () => {
@@ -383,6 +410,29 @@ const updateSchedulePoint = async (index: number) => {
   }
 }
 
+// Watch for time format changes and force component re-render
+watch(
+    () => appStore.timeFormat,
+    (newFormat) => {
+      console.log('Dashboard: Time format changed to', newFormat)
+      componentKey.value++
+      updateDateTime()
+      setTimeout(() => {
+        drawChart()
+      }, 100)
+    }
+)
+
+watch(
+    () => appStore.schedulePoints,
+    () => {
+      setTimeout(() => {
+        drawChart()
+      }, 50)
+    },
+    { deep: true }
+)
+
 onMounted(() => {
   timeInterval = setInterval(updateDateTime, 1000)
 
@@ -401,9 +451,6 @@ onUnmounted(() => {
     clearInterval(timeInterval)
   }
 })
-
-// Ensure hooks are called at the top level
-updateDateTime()
 </script>
 
 <style scoped>

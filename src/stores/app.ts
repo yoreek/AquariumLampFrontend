@@ -36,6 +36,9 @@ export const useAppStore = defineStore("app", () => {
     })),
   })
 
+  // Simple reactive time format
+  const timeFormat = ref<"12" | "24">("24")
+
   // App settings storage
   const appSettings = ref<AppSettings>({
     wifi: {
@@ -95,8 +98,6 @@ export const useAppStore = defineStore("app", () => {
     },
   })
 
-  const timeFormat = computed(() => appSettings.value.time.format)
-
   // Utility function to convert time format
   const convertTimeFormat = (time24: string, to12Hour: boolean): string => {
     if (!to12Hour) return time24
@@ -123,153 +124,107 @@ export const useAppStore = defineStore("app", () => {
     return `${hour24.toString().padStart(2, "0")}:${minutes}`
   }
 
-  // API calls
+  // Function to change time format
+  const setTimeFormat = (format: "12" | "24") => {
+    console.log("Setting time format to:", format)
+    timeFormat.value = format
+    appSettings.value.time.format = format
+    console.log("Time format updated:", timeFormat.value)
+  }
+
+  // Mock API calls (no actual network requests)
   const makeApiCall = async (endpoint: string, options: RequestInit = {}) => {
-    try {
-      const response = await fetch(`${appSettings.value.device.apiEndpoint}${endpoint}`, {
-        ...options,
-        headers: {
-          "Content-Type": "application/json",
-          ...options.headers,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      isConnected.value = true
-      return await response.json()
-    } catch (error) {
-      isConnected.value = false
-      console.error("API call failed:", error)
-      throw error
-    }
+    console.log(`Mock API call to ${endpoint}`, options)
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    return { success: true }
   }
 
   // Actions
   const initializeApp = async () => {
+    console.log("Initializing app...")
     try {
-      await loadLampData()
+      // No API calls, just set connected to true for demo
+      isConnected.value = true
+      console.log("App initialized successfully")
     } catch (error) {
       console.error("Failed to initialize app:", error)
     }
   }
 
   const loadLampData = async () => {
-    try {
-      const data = await makeApiCall("/status")
-      if (data.mode) lampState.value.mode = data.mode
-      if (data.brightness) lampState.value.manualBrightness = data.brightness
-      if (data.schedule) scheduleSettings.value.points = data.schedule
-    } catch (error) {
-      console.error("Failed to load lamp data:", error)
-    }
+    console.log("Loading lamp data...")
+    // Mock data loading
+    isConnected.value = true
   }
 
   const setChannelBrightness = async (channel: number, brightness: number) => {
+    console.log(`Setting channel ${channel} brightness to ${brightness}%`)
     lampState.value.manualBrightness[channel] = brightness
-
-    try {
-      await makeApiCall("/brightness", {
-        method: "POST",
-        body: JSON.stringify({ channel, brightness }),
-      })
-    } catch (error) {
-      console.error("Failed to sync brightness to device:", error)
-    }
   }
 
   const setLampMode = async (mode: "schedule" | "manual" | "off") => {
+    console.log(`Setting lamp mode to ${mode}`)
     lampState.value.mode = mode
-
-    try {
-      await makeApiCall("/mode", {
-        method: "POST",
-        body: JSON.stringify({ mode }),
-      })
-    } catch (error) {
-      console.error("Failed to sync mode to device:", error)
-    }
   }
 
   const updateSchedulePoint = async (index: number, point: SchedulePoint) => {
+    console.log(`Updating schedule point ${index}`, point)
     scheduleSettings.value.points[index] = { ...point }
-
-    try {
-      await makeApiCall("/schedule", {
-        method: "POST",
-        body: JSON.stringify({ index, point }),
-      })
-    } catch (error) {
-      console.error("Failed to sync schedule to device:", error)
-    }
   }
 
   const updateWifiSettings = async (settings: WifiSettings) => {
+    console.log("Updating WiFi settings", settings)
     appSettings.value.wifi = { ...settings }
-
-    try {
-      await makeApiCall("/wifi/config", {
-        method: "POST",
-        body: JSON.stringify(settings),
-      })
-    } catch (error) {
-      console.error("Failed to sync WiFi settings to device:", error)
-    }
   }
 
   const updateTimeSettings = async (settings: TimeSettings) => {
+    console.log("Updating time settings", settings)
     appSettings.value.time = { ...settings }
-
-    try {
-      await makeApiCall("/time/config", {
-        method: "POST",
-        body: JSON.stringify(settings),
-      })
-    } catch (error) {
-      console.error("Failed to sync time settings to device:", error)
-    }
+    timeFormat.value = settings.format
   }
 
   const updateDeviceSettings = async (settings: DeviceSettings) => {
+    console.log("Updating device settings", settings)
     appSettings.value.device = { ...settings }
-
-    try {
-      await makeApiCall("/advanced", {
-        method: "POST",
-        body: JSON.stringify(settings),
-      })
-    } catch (error) {
-      console.error("Failed to sync device settings to device:", error)
-    }
   }
 
   const scanWifiNetworks = async () => {
-    const response = await makeApiCall("/wifi/scan")
-    return response.networks || []
+    console.log("Scanning WiFi networks...")
+    return [
+      { ssid: "HomeNetwork", signal: -45 },
+      { ssid: "OfficeWiFi", signal: -60 },
+      { ssid: "GuestNetwork", signal: -75 },
+    ]
   }
 
   const getDeviceInfo = async (): Promise<DeviceInfo> => {
-    const response = await makeApiCall("/device/info")
-    deviceInfo.value = { ...deviceInfo.value, ...response }
+    console.log("Getting device info...")
     return deviceInfo.value
   }
 
   const getSettings = async () => {
-    const response = await makeApiCall("/settings")
-    return response
+    console.log("Getting settings...")
+    return appSettings.value
   }
 
   const getTimezones = async () => {
-    const response = await makeApiCall("/timezones")
-    return response.timezones || []
+    console.log("Getting timezones...")
+    return [
+      { id: "UTC", name: "UTC (GMT+0)" },
+      { id: "America/New_York", name: "Eastern Time (GMT-5)" },
+      { id: "America/Chicago", name: "Central Time (GMT-6)" },
+      { id: "America/Denver", name: "Mountain Time (GMT-7)" },
+      { id: "America/Los_Angeles", name: "Pacific Time (GMT-8)" },
+      { id: "Europe/London", name: "London (GMT+0)" },
+      { id: "Europe/Berlin", name: "Berlin (GMT+1)" },
+      { id: "Asia/Tokyo", name: "Tokyo (GMT+9)" },
+    ]
   }
 
   const rebootDevice = async () => {
-    await makeApiCall("/device/reboot", {
-      method: "POST",
-    })
+    console.log("Rebooting device...")
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
   return {
@@ -279,16 +234,17 @@ export const useAppStore = defineStore("app", () => {
     scheduleSettings,
     appSettings,
     deviceInfo,
+    timeFormat,
 
     // Computed
     schedulePoints,
     lampMode,
     manualBrightness,
-    timeFormat,
 
     // Utilities
     convertTimeFormat,
     convertTimeFrom12To24,
+    setTimeFormat,
 
     // Actions
     initializeApp,

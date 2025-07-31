@@ -195,10 +195,10 @@
             <v-col cols="12">
               <div class="text-white mb-2">Time Format</div>
               <v-btn-toggle
-                  v-model="appStore.appSettings.time.format"
+                  v-model="appStore.timeFormat"
                   color="primary"
                   mandatory
-                  @update:model-value="updateTimeSettings"
+                  @update:model-value="handleTimeFormatChange"
               >
                 <v-btn value="12">12 Hour</v-btn>
                 <v-btn value="24">24 Hour</v-btn>
@@ -435,6 +435,11 @@ const rebootDevice = async () => {
   } finally {
     rebooting.value = false
   }
+}
+
+const handleTimeFormatChange = (newFormat: string) => {
+  appStore.appSettings.time.format = newFormat
+  updateTimeSettings()
 }
 
 onMounted(async () => {
