@@ -7,11 +7,17 @@
           <v-row align="center">
             <v-col cols="auto">
               <v-btn icon @click="$router.push('/')" color="white">
-                <v-icon>mdi-arrow-left</v-icon>
+                <!-- Заменили на SVG иконку стрелки назад -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/>
+                </svg>
               </v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-icon color="yellow" size="32">mdi-lightbulb</v-icon>
+              <!-- Заменили на SVG иконку лампочки -->
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFC107">
+                <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
+              </svg>
               <span class="text-h5 ml-2 text-white">Aquarium Lamp</span>
             </v-col>
           </v-row>
@@ -87,9 +93,13 @@
                   <template #item="{ props, item }">
                     <v-list-item v-bind="props">
                       <template #append>
-                        <v-icon :color="getSignalColor(item.raw.signal)">
-                          {{ getSignalIcon(item.raw.signal) }}
-                        </v-icon>
+                        <!-- Заменили на SVG иконки WiFi -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" :fill="getSignalColor(item.raw.signal)">
+                          <path v-if="item.raw.signal > -50" d="M1,9L3,7C6.09,4.5 10.5,4.5 13.59,7L15.59,9L12.76,11.83C11.5,10.57 9.5,10.57 8.24,11.83L1,9M12,2C7.86,2 4.08,3.78 1.34,6.83L3.77,9.26C5.88,7.15 8.8,6 12,6C15.2,6 18.12,7.15 20.23,9.26L22.66,6.83C19.92,3.78 16.14,2 12,2M21,9L18.76,11.83C17.5,10.57 15.5,10.57 14.24,11.83L12,14.07L9.76,11.83C8.5,10.57 6.5,10.57 5.24,11.83L3,9L5,7C8.09,4.5 12.5,4.5 15.59,7L21,9M12,12A3,3 0 0,1 15,15A3,3 0 0,1 12,18A3,3 0 0,1 9,15A3,3 0 0,1 12,12Z"/>
+                          <path v-else-if="item.raw.signal > -60" d="M1,9L3,7C6.09,4.5 10.5,4.5 13.59,7L15.59,9L12.76,11.83C11.5,10.57 9.5,10.57 8.24,11.83L1,9M12,2C7.86,2 4.08,3.78 1.34,6.83L3.77,9.26C5.88,7.15 8.8,6 12,6C15.2,6 18.12,7.15 20.23,9.26L22.66,6.83C19.92,3.78 16.14,2 12,2M21,9L18.76,11.83C17.5,10.57 15.5,10.57 14.24,11.83L12,14.07L9.76,11.83C8.5,10.57 6.5,10.57 5.24,11.83L3,9L5,7C8.09,4.5 12.5,4.5 15.59,7L21,9"/>
+                          <path v-else-if="item.raw.signal > -70" d="M1,9L3,7C6.09,4.5 10.5,4.5 13.59,7L15.59,9L12.76,11.83C11.5,10.57 9.5,10.57 8.24,11.83L1,9M12,2C7.86,2 4.08,3.78 1.34,6.83L3.77,9.26C5.88,7.15 8.8,6 12,6C15.2,6 18.12,7.15 20.23,9.26L22.66,6.83C19.92,3.78 16.14,2 12,2"/>
+                          <path v-else d="M1,9L3,7C6.09,4.5 10.5,4.5 13.59,7L15.59,9"/>
+                        </svg>
                       </template>
                     </v-list-item>
                   </template>
@@ -103,7 +113,10 @@
                     :loading="scanning"
                     block
                 >
-                  <v-icon left>mdi-wifi-refresh</v-icon>
+                  <!-- Заменили на SVG иконку обновления -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="mr-2">
+                    <path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/>
+                  </svg>
                   Scan
                 </v-btn>
               </v-col>
@@ -364,16 +377,9 @@ const timezones = ref([
 ])
 
 const getSignalColor = (signal: number) => {
-  if (signal > -50) return 'success'
-  if (signal > -70) return 'warning'
-  return 'error'
-}
-
-const getSignalIcon = (signal: number) => {
-  if (signal > -50) return 'mdi-wifi-strength-4'
-  if (signal > -60) return 'mdi-wifi-strength-3'
-  if (signal > -70) return 'mdi-wifi-strength-2'
-  return 'mdi-wifi-strength-1'
+  if (signal > -50) return '#4CAF50'
+  if (signal > -70) return '#FF9800'
+  return '#F44336'
 }
 
 const scanNetworks = async () => {
