@@ -127,17 +127,14 @@
                     <span class="text-white font-weight-medium">{{ index + 1 }}</span>
                   </v-col>
                   <v-col>
-                    <!-- Always use text input to avoid browser time formatting -->
                     <v-text-field
-                        :model-value="getDisplayTime(point.time)"
-                        type="text"
+                        :model-value="point.time"
+                        type="time"
                         variant="outlined"
                         density="compact"
                         hide-details
                         :disabled="!point.enabled"
-                        :placeholder="appStore.timeFormat === '24' ? '06:00' : '6:00 AM'"
                         @update:model-value="updateTimeValue(index, $event)"
-                        @blur="validateTimeInput(index, $event)"
                     />
                   </v-col>
                 </v-row>
@@ -209,7 +206,6 @@ const connectionStatus = computed(() => {
 
 let timeInterval: NodeJS.Timeout
 
-// Добавить после импортов
 const debounceTimers = ref<{ [key: string]: NodeJS.Timeout }>({})
 
 const updateDateTime = () => {
@@ -237,54 +233,14 @@ const updateDateTime = () => {
   currentDateTime.value = `${dateStr}, ${timeStr}`
 }
 
-const getDisplayTime = (time24: string) => {
-  if (appStore.timeFormat === '24') {
-    return time24
-  } else {
-    return appStore.convertTimeFormat(time24, true)
-  }
-}
-
-const validateTimeInput = (index: number, event: Event) => {
-  const target = event.target as HTMLInputElement
-  const value = target.value
-
-  // Validate time format
-  if (appStore.timeFormat === '24') {
-    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
-    if (!timeRegex.test(value)) {
-      // Reset to original value if invalid
-      target.value = getDisplayTime(appStore.schedulePoints[index].time)
-      return
-    }
-  } else {
-    const timeRegex = /^(1[0-2]|[1-9]):[0-5][0-9]\s*(AM|PM)$/i
-    if (!timeRegex.test(value)) {
-      // Reset to original value if invalid
-      target.value = getDisplayTime(appStore.schedulePoints[index].time)
-      return
-    }
-  }
-}
-
 const updateTimeValue = (index: number, value: string) => {
-  console.log(`updateTimeValue: index=${index}, value=${value}, format=${appStore.timeFormat}`)
+  console.log(`updateTimeValue: index=${index}, value=${value}`)
 
-  if (appStore.timeFormat === '24') {
-    // Validate 24-hour format
-    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
-    if (timeRegex.test(value)) {
-      appStore.schedulePoints[index].time = value
-      updateSchedulePoint(index)
-    }
-  } else {
-    // Validate 12-hour format and convert
-    const timeRegex = /^(1[0-2]|[1-9]):[0-5][0-9]\s*(AM|PM)$/i
-    if (timeRegex.test(value)) {
-      const time24 = appStore.convertTimeFrom12To24(value)
-      appStore.schedulePoints[index].time = time24
-      updateSchedulePoint(index)
-    }
+  // Простая валидация формата HH:MM
+  const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
+  if (timeRegex.test(value)) {
+    appStore.schedulePoints[index].time = value
+    updateSchedulePoint(index)
   }
 }
 
@@ -298,15 +254,12 @@ const drawChart = () => {
   const width = canvas.width
   const height = canvas.height
 
-  // Clear canvas
   ctx.fillStyle = '#16213e'
   ctx.fillRect(0, 0, width, height)
 
-  // Draw grid
   ctx.strokeStyle = '#333'
   ctx.lineWidth = 1
 
-  // Horizontal lines
   for (let i = 0; i <= 4; i++) {
     const y = (height / 4) * i
     ctx.beginPath()
@@ -315,7 +268,6 @@ const drawChart = () => {
     ctx.stroke()
   }
 
-  // Vertical lines (every 4 hours)
   for (let i = 0; i <= 6; i++) {
     const x = (width / 6) * i
     ctx.beginPath()
@@ -324,7 +276,6 @@ const drawChart = () => {
     ctx.stroke()
   }
 
-  // Draw time labels
   ctx.fillStyle = '#fff'
   ctx.font = '12px Arial'
   ctx.textAlign = 'center'
@@ -337,7 +288,6 @@ const drawChart = () => {
     ctx.fillText(timeLabel, x, height - 5)
   }
 
-  // Draw brightness labels
   ctx.textAlign = 'right'
   for (let i = 0; i <= 4; i++) {
     const y = (height / 4) * i
@@ -345,7 +295,6 @@ const drawChart = () => {
     ctx.fillText(`${brightness}%`, width - 5, y + 4)
   }
 
-  // Draw current time line
   const now = new Date()
   const currentHour = now.getHours() + now.getMinutes() / 60
   const currentX = (currentHour / 24) * width
@@ -359,7 +308,6 @@ const drawChart = () => {
   ctx.stroke()
   ctx.setLineDash([])
 
-  // Draw brightness curves for each channel
   channels.forEach((channel, channelIndex) => {
     ctx.strokeStyle = channel.color
     ctx.lineWidth = 3
@@ -375,7 +323,6 @@ const drawChart = () => {
         })
 
     if (enabledPoints.length > 0) {
-      // Add start and end points for smooth 24h cycle
       const points = [
         { time: '00:00', brightness: enabledPoints[enabledPoints.length - 1].brightness[channelIndex] },
         ...enabledPoints.map(p => ({ time: p.time, brightness: p.brightness[channelIndex] })),
@@ -400,15 +347,12 @@ const drawChart = () => {
   })
 }
 
-// Заменить функцию updateManualBrightness на:
 const updateManualBrightness = (channelIndex: number, value: number) => {
-  // Очистить предыдущий таймер для этого канала
   const timerKey = `manual-${channelIndex}`
   if (debounceTimers.value[timerKey]) {
     clearTimeout(debounceTimers.value[timerKey])
   }
 
-  // Установить новый таймер
   debounceTimers.value[timerKey] = setTimeout(async () => {
     try {
       await appStore.setChannelBrightness(channelIndex, value)
@@ -416,7 +360,7 @@ const updateManualBrightness = (channelIndex: number, value: number) => {
     } catch (error) {
       console.error('Failed to update brightness:', error)
     }
-  }, 300) // 300ms задержка
+  }, 300)
 }
 
 const updateLampMode = async (mode: string) => {
@@ -427,15 +371,12 @@ const updateLampMode = async (mode: string) => {
   }
 }
 
-// Заменить функцию updateSchedulePoint на:
 const updateSchedulePoint = (index: number) => {
-  // Очистить предыдущий таймер для этой точки расписания
   const timerKey = `schedule-${index}`
   if (debounceTimers.value[timerKey]) {
     clearTimeout(debounceTimers.value[timerKey])
   }
 
-  // Установить новый таймер
   debounceTimers.value[timerKey] = setTimeout(async () => {
     try {
       await appStore.updateSchedulePoint(index, appStore.schedulePoints[index])
@@ -443,10 +384,9 @@ const updateSchedulePoint = (index: number) => {
     } catch (error) {
       console.error('Failed to update schedule point:', error)
     }
-  }, 500) // 500ms задержка для расписания
+  }, 500)
 }
 
-// Watch for time format changes and force component re-render
 watch(
     () => appStore.timeFormat,
     (newFormat) => {
@@ -476,19 +416,16 @@ onMounted(() => {
     drawChart()
   }, 100)
 
-  // Load initial data
   appStore.initializeApp().then(() => {
     drawChart()
   })
 })
 
-// В onUnmounted добавить очистку таймеров:
 onUnmounted(() => {
   if (timeInterval) {
     clearInterval(timeInterval)
   }
 
-  // Очистить все debounce таймеры
   Object.values(debounceTimers.value).forEach(timer => {
     if (timer) clearTimeout(timer)
   })
