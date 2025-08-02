@@ -120,7 +120,7 @@ export const useAppStore = defineStore("app", () => {
 
     // Create AbortController for timeout
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
 
     try {
       const response = await fetch(url, {

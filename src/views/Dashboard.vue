@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-4" :key="componentKey">
+  <v-container fluid class="pa-0" :key="componentKey">
     <!-- Header -->
     <v-row class="mb-4">
       <v-col cols="12">
@@ -33,7 +33,7 @@
     </v-row>
 
     <!-- Chart Section -->
-    <v-row class="mb-4">
+    <v-row class="mb-4 sticky-row">
       <v-col cols="12">
         <v-card class="pa-4" color="#16213e">
           <v-card-title class="text-white">Daily Brightness Schedule</v-card-title>
@@ -428,5 +428,11 @@ canvas {
   width: 100%;
   height: 100%;
   background: #16213e;
+}
+
+.sticky-row {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 </style>
