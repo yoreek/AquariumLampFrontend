@@ -1,16 +1,75 @@
 import { createApp } from "vue"
 import { createPinia } from "pinia"
-import { createVuetify } from "vuetify"
-import * as components from "vuetify/components"
-import * as directives from "vuetify/directives"
+import { createVuetify } from 'vuetify'
+import {
+  VApp,
+  VMain,
+  VContainer,
+  VRow,
+  VCol,
+  VCard,
+  VCardTitle,
+  VBtn,
+  VBtnToggle,
+  VSelect,
+  VTextField,
+  VSwitch,
+  VChip,
+  VSlider,
+  VSpacer,
+  VListItem,
+} from 'vuetify/components'
+import { Ripple } from 'vuetify/directives'
+export default createVuetify({
+  components: {
+    VApp,
+    VMain,
+    VContainer,
+    VRow,
+    VCol,
+    VCard,
+    VCardTitle,
+    VBtn,
+    VBtnToggle,
+    VSelect,
+    VTextField,
+    VSwitch,
+    VChip,
+    VSlider,
+    VSpacer,
+    VListItem,
+  },
+  directives: {
+    Ripple,
+  },
+})
 import "vuetify/styles"
 
 import App from "./App.vue"
 import router from "./router"
 
 const vuetify = createVuetify({
-  components,
-  directives,
+  components: {
+    VApp,
+    VMain,
+    VContainer,
+    VRow,
+    VCol,
+    VCard,
+    VCardTitle,
+    VBtn,
+    VBtnToggle,
+    VSelect,
+    VTextField,
+    VSwitch,
+    VChip,
+    VSlider,
+    VSpacer,
+    VListItem,
+  },
+  directives: {
+    Ripple,
+  },
   icons: {
     defaultSet: "mdi",
   },
