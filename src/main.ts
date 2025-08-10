@@ -18,6 +18,8 @@ import {
   VSlider,
   VSpacer,
   VListItem,
+  VIcon,
+  VForm,
 } from 'vuetify/components'
 import { Ripple } from 'vuetify/directives'
 export default createVuetify({
@@ -38,6 +40,8 @@ export default createVuetify({
     VSlider,
     VSpacer,
     VListItem,
+    VIcon,
+    VForm,
   },
   directives: {
     Ripple,
@@ -66,6 +70,8 @@ const vuetify = createVuetify({
     VSlider,
     VSpacer,
     VListItem,
+    VIcon,
+    VForm,
   },
   directives: {
     Ripple,

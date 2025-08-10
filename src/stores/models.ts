@@ -1,33 +1,57 @@
 // Модели данных
-export interface SchedulePoint {
+export interface Schedule {
   enabled: boolean
-  time: string
-  brightness: number[] // Массив из 5 значений для каждого канала
+  from: string
+  brightness: number[]
 }
 
-export interface ScheduleSettings {
-  points: SchedulePoint[]
+export interface WifiApSettings {
+  enabled: boolean,
+  ssid: string,
+  password: string,
+  ip: string,
+  gateway: string,
+  subnet: string
+}
+
+export interface WifiStaSettings {
+  enabled: boolean,
+  ssid: string,
+  password: string,
+  hostname: string,
+  ip: string,
+  gateway: string,
+  subnet: string
+  dns1: string,
+  dns2: string
 }
 
 export interface WifiSettings {
-  mode: "ap" | "client" | "auto"
-  ap: {
-    ssid: string
-    ip: string
-    password: string
-  }
-  client: {
-    selectedNetwork: string
-    password: string
-  }
+  ap: WifiApSettings,
+  sta: WifiStaSettings[]
+}
+
+export interface WifiNetwork {
+  ssid: string
+  signal: number
+  secure: boolean
+}
+
+export interface WifiScanResult {
+  scanning: boolean,
+  lastUpdatedAt: string,
+  networks: WifiNetwork[]
+}
+
+export interface NtpSettings {
+  server: string
+  syncInterval: number
+  timeZoneId: string
 }
 
 export interface TimeSettings {
   date: string
   time: string
-  autoSync: boolean
-  ntpServer: string
-  timezone: string
 }
 
 export interface DeviceSettings {
@@ -36,19 +60,31 @@ export interface DeviceSettings {
 
 export interface DeviceInfo {
   connected: boolean
-  ip: string
   firmware: string
+  ip: string
+  subnet: string
+  gateway: string
+  rssi: number
+  macAddress: string
+  heapSize: number
+  heapUsage: number
+  maxFreeBlockSize: number
   uptime: string
-  freeMemory: string
+  time: string
+  timezone: string
 }
 
+export type LampMode = "schedule" | "manual"
+
 export interface LampState {
-  mode: "schedule" | "manual" | "off"
-  manualBrightness: number[]
+  mode: LampMode
+  manualBrightness: number[],
+  schedules: Schedule[]
 }
 
 export interface AppSettings {
   wifi: WifiSettings
   time: TimeSettings
+  ntp: NtpSettings
   device: DeviceSettings
 }

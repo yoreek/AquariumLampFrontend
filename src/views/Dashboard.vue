@@ -20,7 +20,7 @@
 <!--              <div class="text-body-1 text-white">{{ currentDateTime }}</div>-->
 <!--            </v-col>-->
             <v-col cols="auto">
-              <v-btn icon @click="$router.push('/settings')" color="white" density="compact">
+              <v-btn icon @click="router.push('/settings')" color="white" density="compact">
                 <!-- Заменили на SVG иконку настроек -->
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
@@ -70,17 +70,17 @@
                       {{ channel.name }}
                     </v-chip>
                     <v-slider
-                        v-model="appStore.manualBrightness[index]"
+                        v-model="lampStore.lampState.manualBrightness[index]"
                         :color="channel.color"
                         min="0"
                         max="100"
                         step="1"
                         thumb-label
-                        :disabled="appStore.lampMode !== 'manual'"
+                        :disabled="lampStore.lampState.mode !== 'manual'"
                         @update:model-value="updateManualBrightness(index, $event)"
                     >
                       <template #append>
-                        <span class="text-white">{{ appStore.manualBrightness[index] }}%</span>
+                        <span class="text-white">{{ lampStore.lampState.manualBrightness[index] }}%</span>
                       </template>
                     </v-slider>
                   </div>
@@ -90,14 +90,13 @@
             <v-col cols="12" md="4">
               <div class="text-white mb-2">Mode</div>
               <v-btn-toggle
-                  v-model="appStore.lampMode"
+                  v-model="lampStore.lampState.mode"
                   color="primary"
                   mandatory
                   @update:model-value="updateLampMode"
               >
                 <v-btn value="schedule" size="small">Schedule</v-btn>
                 <v-btn value="manual" size="small">Manual</v-btn>
-                <v-btn value="off" size="small">Off</v-btn>
               </v-btn-toggle>
             </v-col>
           </v-row>
@@ -113,16 +112,16 @@
             Schedule Settings
           </v-card-title>
           <v-row>
-            <v-col v-for="(point, index) in appStore.schedulePoints" :key="`schedule-${index}-${componentKey}`" cols="12" md="6" xl="4">
+            <v-col v-for="(schedule, index) in lampStore.lampState.schedules" :key="`schedule-${index}-${componentKey}`" cols="12" md="6" xl="4">
               <v-card class="pa-3 mb-3" color="#0f1419">
                 <v-row align="center" class="mb-2">
                   <v-col cols="auto">
                     <v-switch
-                        v-model="point.enabled"
+                        v-model="schedule.enabled"
                         color="primary"
                         density="compact"
                         hide-details
-                        @update:model-value="updateSchedulePoint(index)"
+                        @update:model-value="updateSchedule(index)"
                     />
                   </v-col>
                   <v-col cols="auto">
@@ -130,12 +129,12 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                        :model-value="point.time"
+                        :model-value="schedule.from"
                         type="time"
                         variant="outlined"
                         density="compact"
                         hide-details
-                        :disabled="!point.enabled"
+                        :disabled="!schedule.enabled"
                         @update:model-value="updateTimeValue(index, $event)"
                     />
                   </v-col>
@@ -156,19 +155,19 @@
                     </v-col>
                     <v-col cols="8">
                       <v-slider
-                          v-model="point.brightness[channelIndex]"
+                          v-model="schedule.brightness[channelIndex]"
                           :color="channel.color"
                           min="0"
                           max="100"
                           step="1"
                           density="compact"
                           hide-details
-                          :disabled="!point.enabled"
-                          @update:model-value="updateSchedulePoint(index)"
+                          :disabled="!schedule.enabled"
+                          @update:model-value="updateSchedule(index)"
                       />
                     </v-col>
                     <v-col cols="2" class="text-right">
-                      <span class="text-caption text-white">{{ point.brightness[channelIndex] }}%</span>
+                      <span class="text-caption text-white">{{ schedule.brightness[channelIndex] }}%</span>
                     </v-col>
                   </v-row>
                 </div>
@@ -183,12 +182,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useAppStore } from '../stores/app'
+import { useLampStore } from '../stores/lamp';
+import { useAppStore } from '../stores/app';
 import pkg from '../../package.json'
+import { LampMode } from "@/stores/models.ts";
+import { useRouter } from 'vue-router'
+import { useDeviceStore } from "@/stores/device.ts";
+
+const router = useRouter()
 
 const version = pkg.version
 
+const lampStore = useLampStore()
 const appStore = useAppStore()
+const deviceStore = useDeviceStore()
 
 const chartCanvas = ref<HTMLCanvasElement>()
 const currentDateTime = ref('')
@@ -203,7 +210,7 @@ const channels = [
 ]
 
 const connectionStatus = computed(() => {
-  if (appStore.isConnected) {
+  if (deviceStore.deviceInfo.connected) {
     return { text: 'Connected to ESP32', color: 'text-green' }
   }
   return { text: 'Disconnected - Check ESP32 connection', color: 'text-red' }
@@ -237,8 +244,8 @@ const updateTimeValue = (index: number, value: string) => {
 
   const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
   if (timeRegex.test(value)) {
-    appStore.schedulePoints[index].time = value
-    updateSchedulePoint(index)
+    lampStore.lampState.schedules[index].from = value
+    updateSchedule(index)
   }
 }
 
@@ -309,27 +316,27 @@ const drawChart = () => {
     ctx.lineWidth = 3
     ctx.beginPath()
 
-    const enabledPoints = appStore.schedulePoints
-        .map((point, index) => ({ ...point, index }))
-        .filter(point => point.enabled)
+    const enabledSchedules = lampStore.lampState.schedules
+        .map((schedule, index) => ({ ...schedule, index }))
+        .filter(schedule => schedule.enabled)
         .sort((a, b) => {
-          const timeA = parseInt(a.time.split(':')[0]) * 60 + parseInt(a.time.split(':')[1])
-          const timeB = parseInt(b.time.split(':')[0]) * 60 + parseInt(b.time.split(':')[1])
+          const timeA = parseInt(a.from.split(':')[0]) * 60 + parseInt(a.from.split(':')[1])
+          const timeB = parseInt(b.from.split(':')[0]) * 60 + parseInt(b.from.split(':')[1])
           return timeA - timeB
         })
 
-    if (enabledPoints.length > 0) {
-      const points = [
-        { time: '00:00', brightness: enabledPoints[enabledPoints.length - 1].brightness[channelIndex] },
-        ...enabledPoints.map(p => ({ time: p.time, brightness: p.brightness[channelIndex] })),
-        { time: '24:00', brightness: enabledPoints[0].brightness[channelIndex] }
+    if (enabledSchedules.length > 0) {
+      const schedules = [
+        { time: '00:00', brightness: enabledSchedules[enabledSchedules.length - 1].brightness[channelIndex] },
+        ...enabledSchedules.map(p => ({ time: p.from, brightness: p.brightness[channelIndex] })),
+        { time: '24:00', brightness: enabledSchedules[0].brightness[channelIndex] }
       ]
 
-      points.forEach((point, index) => {
-        const [hours, minutes] = point.time.split(':').map(Number)
+      schedules.forEach((schedule, index) => {
+        const [hours, minutes] = schedule.time.split(':').map(Number)
         const timeInHours = hours + minutes / 60
         const x = (timeInHours / 24) * width
-        const y = height - (point.brightness / 100) * height
+        const y = height - (schedule.brightness / 100) * height
 
         if (index === 0) {
           ctx.moveTo(x, y)
@@ -351,7 +358,7 @@ const updateManualBrightness = (channelIndex: number, value: number) => {
 
   debounceTimers.value[timerKey] = setTimeout(async () => {
     try {
-      await appStore.setChannelBrightness(channelIndex, value)
+      await lampStore.setChannelBrightness(channelIndex, value)
       console.log(`Channel ${channelIndex} brightness set to ${value}%`)
     } catch (error) {
       console.error('Failed to update brightness:', error)
@@ -359,15 +366,15 @@ const updateManualBrightness = (channelIndex: number, value: number) => {
   }, 300)
 }
 
-const updateLampMode = async (mode: string) => {
+const updateLampMode = async (mode: LampMode) => {
   try {
-    await appStore.setLampMode(mode as 'schedule' | 'manual' | 'off')
+    await lampStore.setLampMode(mode)
   } catch (error) {
     console.error('Failed to update lamp mode:', error)
   }
 }
 
-const updateSchedulePoint = (index: number) => {
+const updateSchedule = (index: number) => {
   const timerKey = `schedule-${index}`
   if (debounceTimers.value[timerKey]) {
     clearTimeout(debounceTimers.value[timerKey])
@@ -375,16 +382,16 @@ const updateSchedulePoint = (index: number) => {
 
   debounceTimers.value[timerKey] = setTimeout(async () => {
     try {
-      await appStore.updateSchedulePoint(index, appStore.schedulePoints[index])
-      console.log(`Schedule point ${index} updated`)
+      await lampStore.updateSchedule(index, lampStore.lampState.schedules[index])
+      console.log(`Schedule ${index} updated`)
     } catch (error) {
-      console.error('Failed to update schedule point:', error)
+      console.error('Failed to update schedule:', error)
     }
   }, 500)
 }
 
 watch(
-    () => appStore.schedulePoints,
+    () => lampStore.lampState.schedules,
     () => {
       setTimeout(() => {
         drawChart()
