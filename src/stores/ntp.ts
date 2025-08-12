@@ -1,44 +1,25 @@
-import {computed, ref, toRaw} from "vue";
 import { defineStore } from "pinia";
-import { makeApiCall } from "./utils";
+import { useResourceLoader } from '@/composables/useResourceLoader'
 import { NtpSettings } from "./models";
 
+const initialState = (): NtpSettings => ({
+  server: "pool.ntp.org",
+  syncInterval: 3600,
+  timeZoneId: "UTC",
+})
+
 export const useNtpStore = defineStore("ntp", () => {
-  const ntpSettings = ref<NtpSettings>({
-    server: "pool.ntp.org",
-    syncInterval: 3600,
-    timeZoneId: "UTC",
-  });
+  const loader = useResourceLoader<NtpSettings>({
+    getUrl: '/api/ntp',
+    postUrl: '/api/ntp',
+    initial: initialState,
+  })
 
-  const deepClone = <T>(x: T): T =>
-    (globalThis as any).structuredClone
-      ? structuredClone(toRaw(x))
-      : JSON.parse(JSON.stringify(toRaw(x)))
-
-  const savedSnapshot = ref<NtpSettings>(deepClone(ntpSettings.value))
-
-  const isDirty = computed(() =>
-    JSON.stringify(ntpSettings.value) !== JSON.stringify(savedSnapshot.value)
-  )
-
-  const save = async () => {
-    console.log("Update NTP")
-
-    try {
-      await makeApiCall("/api/ntp", {
-        method: "POST",
-        body: JSON.stringify(ntpSettings.value),
-      })
-      savedSnapshot.value = deepClone(ntpSettings.value)
-    } catch (error) {
-      console.error("Failed to set NTP:", error)
-      throw error
-    }
-  }
-
-  const reset = () => {
-    ntpSettings.value = deepClone(savedSnapshot.value)
-  }
-
-  return { ntpSettings, save, isDirty, reset };
+  return {
+    state: loader.data,
+    isDirty: loader.isDirty,
+    reset: loader.resetToSnapshot,
+    load: loader.load,
+    save: loader.save,
+  };
 });

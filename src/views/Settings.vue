@@ -31,24 +31,12 @@
     <TimeSection />
     <NtpSection />
     <DeviceInfoSection />
+    <DeviceSettingsSection />
 
-    <!-- Advanced Settings -->
     <v-row class="ma-1">
       <v-col cols="12" class="pa-0">
         <v-card class="pa-2" color="#16213e">
           <v-card-title class="text-white">Advanced</v-card-title>
-
-          <v-row class="mb-4">
-            <v-col cols="12">
-              <v-text-field
-                  v-model="deviceStore.deviceSetting.updateInterval"
-                  label="Update Interval (seconds)"
-                  type="number"
-                  variant="outlined"
-                  @update:model-value="updateDeviceSettings"
-              />
-            </v-col>
-          </v-row>
 
           <v-row class="mb-4">
             <v-col cols="12">
@@ -58,11 +46,6 @@
           </v-row>
 
           <v-row>
-            <v-col cols="12" md="6">
-              <v-btn color="success" @click="saveDeviceSettings" :loading="saving" block>
-                Save Advanced Settings
-              </v-btn>
-            </v-col>
             <v-col cols="12" md="6">
               <v-btn color="warning" @click="rebootDevice" :loading="rebooting" block>
                 Reboot Device
@@ -80,20 +63,16 @@ import { ref } from 'vue'
 import { useDeviceStore } from '../stores/device';
 import pkg from '../../package.json'
 import { useRouter } from 'vue-router'
-import { apiBaseUrl } from '../stores/utils';
+import { apiBaseUrl } from '@/utils/api';
 import WifiSection from '@/components/settings/WifiSection.vue'
 import TimeSection from '@/components/settings/TimeSection.vue'
 import NtpSection from '@/components/settings/NtpSection.vue'
 import DeviceInfoSection from '@/components/settings/DeviceInfoSection.vue'
+import DeviceSettingsSection from '@/components/settings/DeviceSettingsSection.vue'
 
 const router = useRouter()
-
 const version = pkg.version
-
 const deviceStore = useDeviceStore();
-
-const saving = ref(false)
-
 // const scanning = ref(false)
 const rebooting = ref(false)
 
@@ -120,21 +99,6 @@ const rebooting = ref(false)
 //   }
 // }
 
-
-const updateDeviceSettings = () => {
-  // Settings are automatically updated in store
-}
-
-const saveDeviceSettings = async () => {
-  saving.value = true
-  try {
-    await deviceStore.updateDeviceSettings(deviceStore.deviceSetting)
-  } catch (error) {
-    console.error('Failed to save device settings:', error)
-  } finally {
-    saving.value = false
-  }
-}
 
 const rebootDevice = async () => {
   rebooting.value = true

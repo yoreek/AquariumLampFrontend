@@ -12,37 +12,37 @@
             <v-row>
               <v-col cols="12">
                 <v-switch
-                    v-model="wifiStore.wifiSettings.ap.enabled"
-                    :label="wifiStore.wifiSettings.ap.enabled ? 'Enabled' : 'Disabled'"
+                    v-model="wifiStore.state.ap.enabled"
+                    :label="wifiStore.state.ap.enabled ? 'Enabled' : 'Disabled'"
                     color="success"
                     hide-details
                 />
               </v-col>
               <v-col cols="12" md="4">
                 <v-text-field
-                    v-model="wifiStore.wifiSettings.ap.ssid"
+                    v-model="wifiStore.state.ap.ssid"
                     label="SSID"
                     variant="outlined"
                     :rules="[rules.required, rules.max(32)]"
                 />
               </v-col>
               <v-col cols="12" md="4">
-                <PasswordField v-model="wifiStore.wifiSettings.ap.password" label="Password" variant="outlined" />
+                <PasswordField v-model="wifiStore.state.ap.password" label="Password" variant="outlined" />
               </v-col>
               <v-col cols="12" md="4">
-                <IpInput v-model="wifiStore.wifiSettings.ap.ip" label="IP Address" />
+                <IpInput v-model="wifiStore.state.ap.ip" label="IP Address" />
               </v-col>
               <v-col cols="12" md="4">
-                <IpInput v-model="wifiStore.wifiSettings.ap.gateway" label="Gateway" />
+                <IpInput v-model="wifiStore.state.ap.gateway" label="Gateway" />
               </v-col>
               <v-col cols="12" md="4">
-                <IpInput v-model="wifiStore.wifiSettings.ap.subnet" label="Subnet Mask" />
+                <IpInput v-model="wifiStore.state.ap.subnet" label="Subnet Mask" />
               </v-col>
             </v-row>
           </v-card>
 
           <!-- Client Settings -->
-          <v-card class="pa-3 mb-4" color="#0f1419" v-for="(sta, index) in wifiStore.wifiSettings.sta" :key="index">
+          <v-card class="pa-3 mb-4" color="#0f1419" v-for="(sta, index) in wifiStore.state.sta" :key="index">
             <v-card-title class="text-white pa-0 mb-3">Client Settings {{ index + 1 }}</v-card-title>
             <v-row>
               <v-col cols="12">
@@ -138,7 +138,7 @@
                   color="success"
                   block
                   :loading="saving"
-                  :disabled="!valid || !wifiStore.isWifiDirty"
+                  :disabled="!valid || !wifiStore.isDirty"
                   @click="onSave"
               >
                 Save WiFi Settings
@@ -148,8 +148,8 @@
               <v-btn
                   color="default"
                   block
-                  :disabled="!wifiStore.isWifiDirty"
-                  @click="wifiStore.resetWifiSettings()"
+                  :disabled="!wifiStore.isDirty"
+                  @click="wifiStore.reset()"
               >
                 Reset
               </v-btn>
@@ -162,6 +162,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useWifiStore } from '@/stores/wifi';
 import IpInput from '@/components/IpInput.vue'
@@ -191,12 +192,16 @@ async function onSave() {
   if (!res?.valid) return
   try {
     saving.value = true
-    await wifiStore.updateWifiSettings()
+    await wifiStore.save()
     form.value?.resetValidation() // по желанию
   } finally {
     saving.value = false
   }
 }
+
+onMounted(() => {
+  wifiStore.load()
+})
 </script>
 
 <style scoped>

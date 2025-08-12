@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { LampState, LampMode, Schedule } from "./models";
-import { makeApiCall } from "./utils";
+import { makeApiCall } from "@/utils/api";
 
 export const useLampStore = defineStore("lamp", () => {
   const lampState = ref<LampState>({

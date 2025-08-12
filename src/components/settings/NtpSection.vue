@@ -8,7 +8,7 @@
 
           <v-row class="mb-4">
             <v-col cols="12">
-              <v-text-field v-model="ntpStore.ntpSettings.server" label="NTP Server" variant="outlined" />
+              <v-text-field v-model="ntpStore.state.server" label="NTP Server" variant="outlined" />
             </v-col>
           </v-row>
 
@@ -16,7 +16,7 @@
             <v-col cols="12">
               <v-text-field
                   type="number"
-                  v-model="ntpStore.ntpSettings.syncInterval"
+                  v-model="ntpStore.state.syncInterval"
                   label="Sync Interval"
                   variant="outlined"
               />
@@ -25,7 +25,7 @@
           <v-row class="mb-4">
             <v-col cols="12">
               <v-select
-                  v-model="ntpStore.ntpSettings.timeZoneId"
+                  v-model="ntpStore.state.timeZoneId"
                   :items="timezones"
                   item-title="name"
                   item-value="id"

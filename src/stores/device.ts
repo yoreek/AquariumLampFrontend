@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { DeviceInfo, DeviceSettings } from "./models";
-import { makeApiCall } from "./utils";
+import { makeApiCall } from "@/utils/api";
 
 export const useDeviceStore = defineStore("device", () => {
   const deviceInfo = ref<DeviceInfo>({
