@@ -70,7 +70,7 @@ export interface DeviceInfo {
   timezone: string
 }
 
-export type LampMode = "schedule" | "manual"
+export type LampMode = "scheduled" | "manual"
 
 export interface LampState {
   mode: LampMode

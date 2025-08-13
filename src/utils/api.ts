@@ -1,6 +1,7 @@
 import { computed, toRaw } from 'vue'
 
 export const apiBaseUrl = computed(() => {
+  return 'http://192.168.1.167'
   if (typeof window !== 'undefined') {
     const { protocol, hostname, port } = window.location
     const std = (protocol === 'http:'  && port === '80') ||

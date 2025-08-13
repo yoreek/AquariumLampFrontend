@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { DeviceInfo, DeviceSettings } from "./models";
+import type { DeviceInfo } from "./models";
 import { makeApiCall } from "@/utils/api";
 
 export const useDeviceStore = defineStore("device", () => {
@@ -20,10 +20,6 @@ export const useDeviceStore = defineStore("device", () => {
     timezone: "",
   });
 
-  const deviceSetting = ref<DeviceSettings>({
-    updateInterval: 5,
-  });
-
   const getDeviceInfo = async (): Promise<DeviceInfo> => {
     console.log("Getting device info...");
     try {
@@ -40,22 +36,6 @@ export const useDeviceStore = defineStore("device", () => {
       console.error("Failed to get device info:", error);
       deviceInfo.value.connected = false;
       return deviceInfo.value;
-    }
-  };
-
-  const updateDeviceSettings = async (settings: DeviceSettings) => {
-    console.log("Updating device settings", settings);
-
-    deviceSetting.value = { ...settings };
-
-    try {
-      await makeApiCall("/api/device/config", {
-        method: "POST",
-        body: JSON.stringify(settings),
-      });
-    } catch (error) {
-      console.error("Failed to update device settings:", error);
-      throw error;
     }
   };
 
@@ -79,11 +59,22 @@ export const useDeviceStore = defineStore("device", () => {
     }
   };
 
+  const factoryReset = async () => {
+    console.log("Factory reset...");
+    try {
+      await makeApiCall("/api/device/factory_reset", {
+        method: "POST",
+      });
+    } catch (error) {
+      console.error("Failed to reset device:", error);
+      throw error;
+    }
+  };
+
   return {
     deviceInfo,
-    deviceSetting,
     getDeviceInfo,
-    updateDeviceSettings,
     rebootDevice,
+    factoryReset
   };
 });

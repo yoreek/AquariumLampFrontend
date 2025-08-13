@@ -95,7 +95,7 @@
                   mandatory
                   @update:model-value="updateLampMode"
               >
-                <v-btn value="schedule" size="small">Schedule</v-btn>
+                <v-btn value="scheduled" size="small">Scheduled</v-btn>
                 <v-btn value="manual" size="small">Manual</v-btn>
               </v-btn-toggle>
             </v-col>
@@ -320,20 +320,20 @@ const drawChart = () => {
         .map((schedule, index) => ({ ...schedule, index }))
         .filter(schedule => schedule.enabled)
         .sort((a, b) => {
-          const timeA = parseInt(a.from.split(':')[0]) * 60 + parseInt(a.from.split(':')[1])
-          const timeB = parseInt(b.from.split(':')[0]) * 60 + parseInt(b.from.split(':')[1])
-          return timeA - timeB
+          const fromA = parseInt(a.from.split(':')[0]) * 60 + parseInt(a.from.split(':')[1])
+          const fromB = parseInt(b.from.split(':')[0]) * 60 + parseInt(b.from.split(':')[1])
+          return fromA - fromB
         })
 
     if (enabledSchedules.length > 0) {
       const schedules = [
-        { time: '00:00', brightness: enabledSchedules[enabledSchedules.length - 1].brightness[channelIndex] },
-        ...enabledSchedules.map(p => ({ time: p.from, brightness: p.brightness[channelIndex] })),
-        { time: '24:00', brightness: enabledSchedules[0].brightness[channelIndex] }
+        { from: '00:00', brightness: enabledSchedules[enabledSchedules.length - 1].brightness[channelIndex] },
+        ...enabledSchedules.map(p => ({ from: p.from, brightness: p.brightness[channelIndex] })),
+        { from: '24:00', brightness: enabledSchedules[0].brightness[channelIndex] }
       ]
 
       schedules.forEach((schedule, index) => {
-        const [hours, minutes] = schedule.time.split(':').map(Number)
+        const [hours, minutes] = schedule.from.split(':').map(Number)
         const timeInHours = hours + minutes / 60
         const x = (timeInHours / 24) * width
         const y = height - (schedule.brightness / 100) * height

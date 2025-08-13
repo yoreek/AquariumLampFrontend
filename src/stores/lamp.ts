@@ -5,7 +5,7 @@ import { makeApiCall } from "@/utils/api";
 
 export const useLampStore = defineStore("lamp", () => {
   const lampState = ref<LampState>({
-    mode: "schedule",
+    mode: "scheduled",
     manualBrightness: [0, 0, 0, 0, 0],
     schedules: Array.from({ length: 10 }, (_, i) => ({
       enabled: i < 4,
@@ -20,8 +20,14 @@ export const useLampStore = defineStore("lamp", () => {
     })),
   });
 
+  const lampDataLoading = ref(false);
   const loadLampData = async () => {
+    if (lampDataLoading.value) {
+      console.log("Lamp data is already loading, skipping...");
+      return;
+    }
     console.log("Loading lamp data...");
+    lampDataLoading.value = true;
     try {
       // Get current lamp state
       const lampData: LampState = await makeApiCall("/api/lamp/state");
@@ -37,6 +43,8 @@ export const useLampStore = defineStore("lamp", () => {
     } catch (error) {
       console.error("Failed to load lamp data:", error);
       throw error;
+    } finally {
+      lampDataLoading.value = false;
     }
   };
 

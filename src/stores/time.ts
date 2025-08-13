@@ -13,9 +13,10 @@ export const useTimeStore = defineStore("time", () => {
     console.log("Update time")
 
     try {
-      await makeApiCall("/api/time", {
+      const isoString = `${state.value.date}T${state.value.time}:00`;
+      await makeApiCall("/api/device/time", {
         method: "POST",
-        body: JSON.stringify(state.value),
+        body: JSON.stringify({ date: isoString }),
       })
     } catch (error) {
       console.error("Failed to set manual time:", error)
