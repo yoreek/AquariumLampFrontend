@@ -31,7 +31,6 @@
     <TimeSection />
     <NtpSection />
     <DeviceInfoSection />
-    <DeviceSettingsSection />
 
     <v-row class="ma-1">
       <v-col cols="12" class="pa-0">
@@ -68,7 +67,6 @@ import WifiSection from '@/components/settings/WifiSection.vue'
 import TimeSection from '@/components/settings/TimeSection.vue'
 import NtpSection from '@/components/settings/NtpSection.vue'
 import DeviceInfoSection from '@/components/settings/DeviceInfoSection.vue'
-import DeviceSettingsSection from '@/components/settings/DeviceSettingsSection.vue'
 
 const router = useRouter()
 const version = pkg.version

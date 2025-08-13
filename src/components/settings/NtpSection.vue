@@ -25,7 +25,7 @@
           <v-row class="mb-4">
             <v-col cols="12">
               <v-select
-                  v-model="ntpStore.state.timeZoneId"
+                  v-model="ntpStore.state.timezone"
                   :items="timezones"
                   item-title="name"
                   item-value="id"
@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useNtpStore } from '@/stores/ntp';
 import timezones from "@/data/timezones.json";
 
@@ -86,6 +86,10 @@ async function onSave() {
     saving.value = false
   }
 }
+
+onMounted(() => {
+  ntpStore.load()
+})
 </script>
 
 <style scoped>

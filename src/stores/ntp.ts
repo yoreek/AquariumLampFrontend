@@ -5,7 +5,7 @@ import { NtpSettings } from "./models";
 const initialState = (): NtpSettings => ({
   server: "pool.ntp.org",
   syncInterval: 3600,
-  timeZoneId: "UTC",
+  timezone: "Asia/Singapore",
 })
 
 export const useNtpStore = defineStore("ntp", () => {

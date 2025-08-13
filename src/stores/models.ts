@@ -46,16 +46,12 @@ export interface WifiScanResult {
 export interface NtpSettings {
   server: string
   syncInterval: number
-  timeZoneId: string
+  timezone: string
 }
 
 export interface TimeSettings {
   date: string
   time: string
-}
-
-export interface DeviceSettings {
-  updateInterval: number
 }
 
 export interface DeviceInfo {
@@ -86,5 +82,4 @@ export interface AppSettings {
   wifi: WifiSettings
   time: TimeSettings
   ntp: NtpSettings
-  device: DeviceSettings
 }
