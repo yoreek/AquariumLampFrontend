@@ -110,7 +110,7 @@ onMounted(async () => {
             <div class="text-white">Heap Usage:</div>
           </v-col>
           <v-col cols="6">
-            <div class="text-success">{{ deviceStore.deviceInfo.heapUsage }}</div>
+            <div class="text-success">{{ deviceStore.deviceInfo.heapUsage }} %</div>
           </v-col>
         </v-row>
 

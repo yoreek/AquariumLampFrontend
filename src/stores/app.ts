@@ -26,7 +26,7 @@ export const useAppStore = defineStore("app", () => {
       } catch (error) {
         console.log("Auto-refresh failed, device may be offline")
       }
-    }, deviceStore.deviceSetting.updateInterval * 1000)
+    }, 30_000)
   }
 
 

@@ -51,7 +51,7 @@
               </v-btn>
             </v-col>
             <v-col cols="12" md="6">
-              <v-btn color="warning" @click="showConfirmDialog = true" :loading="resetting" block>
+              <v-btn color="warning" @click="showFactoryResetConfirmDialog = true" :loading="resetting" block>
                 Factory Reset
               </v-btn>
             </v-col>
@@ -72,7 +72,8 @@
           <v-btn color="warning" @click="confirmFactoryReset">Confirm</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>  </v-container>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script setup lang="ts">

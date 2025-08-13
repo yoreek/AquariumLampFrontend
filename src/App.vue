@@ -13,7 +13,9 @@ import { useAppStore } from './stores/app'
 const appStore = useAppStore()
 
 onMounted(() => {
-  appStore.initializeApp()
+  appStore.initializeApp().then(() => {
+    appStore.startAutoRefresh()
+  })
 })
 </script>
 

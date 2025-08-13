@@ -6,19 +6,17 @@
         <v-card class="pa-2" color="#16213e">
           <v-row align="center">
             <v-col cols="auto">
-              <v-row align="center" no-gutters class="ml-2">
-                <!-- Заменили на SVG иконку лампочки -->
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFC107">
-                  <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
-                </svg>
-                <span class="text-h6 ml-2 text-white">Aquarium Lamp</span>
-                <span class="text-caption ml-2 text-grey-darken-1">v{{ version }}</span>
-              </v-row>
+              <!-- Заменили на SVG иконку лампочки -->
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFC107">
+                <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
+              </svg>
+              <span class="text-h6 ml-2 text-white">Aquarium Lamp</span>
+              <span class="text-caption ml-2 text-grey-darken-1">v{{ version }}</span>
             </v-col>
             <v-spacer />
-<!--            <v-col cols="auto">-->
-<!--              <div class="text-body-1 text-white">{{ currentDateTime }}</div>-->
-<!--            </v-col>-->
+            <v-col cols="auto">
+              <div class="text-body-1 text-white">{{ currentDateTime }}</div>
+            </v-col>
             <v-col cols="auto">
               <v-btn icon @click="router.push('/settings')" color="white" density="compact">
                 <!-- Заменили на SVG иконку настроек -->
@@ -38,7 +36,7 @@
         <v-card class="pa-4" color="#16213e">
           <v-card-title class="text-white">Daily Brightness Schedule</v-card-title>
           <div class="mb-4">
-            <v-row>
+            <v-row class="pa-2">
               <v-col v-for="(channel, index) in channels" :key="index" cols="auto" class="pa-1">
                 <v-chip :color="channel.color" variant="flat" size="small">
                   {{ channel.name }}
@@ -46,9 +44,19 @@
               </v-col>
             </v-row>
           </div>
-          <div class="chart-container">
-            <canvas ref="chartCanvas" width="800" height="200"></canvas>
-          </div>
+          <ChartBrightness
+              :channels="[
+                { name: 'Blue', color: '#2196F3' },
+                { name: 'Blue/Violet', color: '#673AB7' },
+                { name: 'Blue/Green', color: '#009688' },
+                { name: 'White', color: '#FFFFFF' },
+                { name: 'W/Y/M', color: '#FF69B4' }
+              ]"
+              :schedules="lampStore.lampState.schedules"
+              :height="300"
+              :hover="true"
+              :show-now="true"
+          />
           <div class="text-center mt-2" :class="connectionStatus.color">
             {{ connectionStatus.text }}
           </div>
@@ -183,21 +191,19 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useLampStore } from '../stores/lamp';
-import { useAppStore } from '../stores/app';
 import pkg from '../../package.json'
 import { LampMode } from "@/stores/models.ts";
 import { useRouter } from 'vue-router'
 import { useDeviceStore } from "@/stores/device.ts";
+import ChartBrightness from "@/components/ChartBrightness.vue";
 
 const router = useRouter()
 
 const version = pkg.version
 
 const lampStore = useLampStore()
-const appStore = useAppStore()
 const deviceStore = useDeviceStore()
 
-const chartCanvas = ref<HTMLCanvasElement>()
 const currentDateTime = ref('')
 const componentKey = ref(0)
 
@@ -223,12 +229,11 @@ const debounceTimers = ref<{ [key: string]: NodeJS.Timeout }>({})
 const updateDateTime = () => {
   const now = new Date()
 
-  const dateStr = now.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  // const dateStr = now.toLocaleDateString('en-US', {
+  //   year: 'numeric',
+  //   month: 'numeric',
+  //   day: 'numeric'
+  // })
 
   const timeStr = now.toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -236,7 +241,8 @@ const updateDateTime = () => {
     second: '2-digit'
   })
 
-  currentDateTime.value = `${dateStr}, ${timeStr}`
+  currentDateTime.value = timeStr
+  // currentDateTime.value = `${dateStr}, ${timeStr}`
 }
 
 const updateTimeValue = (index: number, value: string) => {
@@ -247,107 +253,6 @@ const updateTimeValue = (index: number, value: string) => {
     lampStore.lampState.schedules[index].from = value
     updateSchedule(index)
   }
-}
-
-const drawChart = () => {
-  if (!chartCanvas.value) return
-
-  const canvas = chartCanvas.value
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  const width = canvas.width
-  const height = canvas.height
-
-  ctx.fillStyle = '#16213e'
-  ctx.fillRect(0, 0, width, height)
-
-  ctx.strokeStyle = '#333'
-  ctx.lineWidth = 1
-
-  for (let i = 0; i <= 4; i++) {
-    const y = (height / 4) * i
-    ctx.beginPath()
-    ctx.moveTo(0, y)
-    ctx.lineTo(width, y)
-    ctx.stroke()
-  }
-
-  for (let i = 0; i <= 6; i++) {
-    const x = (width / 6) * i
-    ctx.beginPath()
-    ctx.moveTo(x, 0)
-    ctx.lineTo(x, height)
-    ctx.stroke()
-  }
-
-  ctx.fillStyle = '#fff'
-  ctx.font = '12px Arial'
-  ctx.textAlign = 'center'
-  for (let i = 0; i <= 6; i++) {
-    const x = (width / 6) * i
-    const hour = i * 4
-    const timeLabel = `${hour}:00`  // Убрать конвертацию
-    ctx.fillText(timeLabel, x, height - 5)
-  }
-
-  ctx.textAlign = 'right'
-  for (let i = 0; i <= 4; i++) {
-    const y = (height / 4) * i
-    const brightness = 100 - (i * 25)
-    ctx.fillText(`${brightness}%`, width - 5, y + 4)
-  }
-
-  const now = new Date()
-  const currentHour = now.getHours() + now.getMinutes() / 60
-  const currentX = (currentHour / 24) * width
-
-  ctx.strokeStyle = '#ff6b6b'
-  ctx.lineWidth = 2
-  ctx.setLineDash([5, 5])
-  ctx.beginPath()
-  ctx.moveTo(currentX, 0)
-  ctx.lineTo(currentX, height)
-  ctx.stroke()
-  ctx.setLineDash([])
-
-  channels.forEach((channel, channelIndex) => {
-    ctx.strokeStyle = channel.color
-    ctx.lineWidth = 3
-    ctx.beginPath()
-
-    const enabledSchedules = lampStore.lampState.schedules
-        .map((schedule, index) => ({ ...schedule, index }))
-        .filter(schedule => schedule.enabled)
-        .sort((a, b) => {
-          const fromA = parseInt(a.from.split(':')[0]) * 60 + parseInt(a.from.split(':')[1])
-          const fromB = parseInt(b.from.split(':')[0]) * 60 + parseInt(b.from.split(':')[1])
-          return fromA - fromB
-        })
-
-    if (enabledSchedules.length > 0) {
-      const schedules = [
-        { from: '00:00', brightness: enabledSchedules[enabledSchedules.length - 1].brightness[channelIndex] },
-        ...enabledSchedules.map(p => ({ from: p.from, brightness: p.brightness[channelIndex] })),
-        { from: '24:00', brightness: enabledSchedules[0].brightness[channelIndex] }
-      ]
-
-      schedules.forEach((schedule, index) => {
-        const [hours, minutes] = schedule.from.split(':').map(Number)
-        const timeInHours = hours + minutes / 60
-        const x = (timeInHours / 24) * width
-        const y = height - (schedule.brightness / 100) * height
-
-        if (index === 0) {
-          ctx.moveTo(x, y)
-        } else {
-          ctx.lineTo(x, y)
-        }
-      })
-    }
-
-    ctx.stroke()
-  })
 }
 
 const updateManualBrightness = (channelIndex: number, value: number) => {
@@ -390,26 +295,9 @@ const updateSchedule = (index: number) => {
   }, 500)
 }
 
-watch(
-    () => lampStore.lampState.schedules,
-    () => {
-      setTimeout(() => {
-        drawChart()
-      }, 50)
-    },
-    { deep: true }
-)
-
 onMounted(() => {
-  timeInterval = setInterval(updateDateTime, 1000)
-
-  setTimeout(() => {
-    drawChart()
-  }, 100)
-
-  appStore.initializeApp().then(() => {
-    drawChart()
-  })
+  updateDateTime()
+  timeInterval = setInterval(updateDateTime, 10_000)
 })
 
 onUnmounted(() => {
@@ -424,19 +312,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.chart-container {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-}
-
-canvas {
-  width: 100%;
-  height: 100%;
-  background: #16213e;
-}
-
 .sticky-row {
   position: sticky;
   top: 0;
