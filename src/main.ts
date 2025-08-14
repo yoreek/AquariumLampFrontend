@@ -23,6 +23,10 @@ import {
   VListItem,
   VIcon,
   VForm,
+  VExpansionPanel,
+  VExpansionPanels,
+  VExpansionPanelTitle,
+  VExpansionPanelText,
 } from 'vuetify/components'
 import { Ripple } from 'vuetify/directives'
 export default createVuetify({
@@ -48,6 +52,10 @@ export default createVuetify({
     VListItem,
     VIcon,
     VForm,
+    VExpansionPanel,
+    VExpansionPanels,
+    VExpansionPanelTitle,
+    VExpansionPanelText,
   },
   directives: {
     Ripple,
@@ -81,6 +89,10 @@ const vuetify = createVuetify({
     VListItem,
     VIcon,
     VForm,
+    VExpansionPanel,
+    VExpansionPanels,
+    VExpansionPanelTitle,
+    VExpansionPanelText,
   },
   directives: {
     Ripple,

@@ -1,12 +1,11 @@
 <template>
   <v-container fluid class="pa-0" :key="componentKey">
     <!-- Header -->
-    <v-row class="mb-1">
+    <v-row class="">
       <v-col cols="12">
         <v-card class="pa-2" color="#16213e">
           <v-row align="center">
             <v-col cols="auto">
-              <!-- Заменили на SVG иконку лампочки -->
               <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFC107">
                 <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
               </svg>
@@ -15,11 +14,22 @@
             </v-col>
             <v-spacer />
             <v-col cols="auto">
+              <!-- Connection Status Icon: Wi-Fi -->
+              <svg v-if="deviceStore.deviceInfo.connected" width="20" height="20" viewBox="0 0 24 24" fill="#4CAF50">
+                <!-- Wi-Fi connected icon -->
+                <path d="M12 18c.83 0 1.5-.67 1.5-1.5S12.83 15 12 15s-1.5.67-1.5 1.5S11.17 18 12 18zm4.24-2.24a6.97 6.97 0 0 0-8.48 0c-.39.32-.46.89-.14 1.28.32.39.89.46 1.28.14a4.97 4.97 0 0 1 6.2 0c.39.32.96.25 1.28-.14.32-.39.25-.96-.14-1.28zm2.12-2.12a10.97 10.97 0 0 0-12.72 0c-.39.32-.46.89-.14 1.28.32.39.89.46 1.28.14a8.97 8.97 0 0 1 10.34 0c.39.32.96.25 1.28-.14.32-.39.25-.96-.14-1.28zm2.12-2.12a14.97 14.97 0 0 0-16.96 0c-.39.32-.46.89-.14 1.28.32.39.89.46 1.28.14a12.97 12.97 0 0 1 14.34 0c.39.32.96.25 1.28-.14.32-.39.25-.96-.14-1.28z"/>
+              </svg>
+              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F44336" stroke-width="2">
+                <!-- Wi-Fi disconnected icon -->
+                <path d="M12 18c.83 0 1.5-.67 1.5-1.5S12.83 15 12 15s-1.5.67-1.5 1.5S11.17 18 12 18zm4.24-2.24a6.97 6.97 0 0 0-8.48 0c-.39.32-.46.89-.14 1.28.32.39.89.46 1.28.14a4.97 4.97 0 0 1 6.2 0c.39.32.96.25 1.28-.14.32-.39.25-.96-.14-1.28zm2.12-2.12a10.97 10.97 0 0 0-12.72 0c-.39.32-.46.89-.14 1.28.32.39.89.46 1.28.14a8.97 8.97 0 0 1 10.34 0c.39.32.96.25 1.28-.14.32-.39.25-.96-.14-1.28zm2.12-2.12a14.97 14.97 0 0 0-16.96 0c-.39.32-.46.89-.14 1.28.32.39.89.46 1.28.14a12.97 12.97 0 0 1 14.34 0c.39.32.96.25 1.28-.14.32-.39.25-.96-.14-1.28z"/>
+                <line x1="5" y1="5" x2="19" y2="19" stroke="#F44336" stroke-width="2" />
+              </svg>
+            </v-col>
+            <v-col cols="auto">
               <div class="text-body-1 text-white">{{ currentDateTime }}</div>
             </v-col>
             <v-col cols="auto">
               <v-btn icon @click="router.push('/settings')" color="white" density="compact">
-                <!-- Заменили на SVG иконку настроек -->
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
                 </svg>
@@ -31,11 +41,10 @@
     </v-row>
 
     <!-- Chart Section -->
-    <v-row class="mb-1 sticky-row">
+    <v-row class="ma-0 sticky-row">
       <v-col cols="12" class="pa-0">
-        <v-card class="pa-4" color="#16213e">
-          <v-card-title class="text-white">Daily Brightness Schedule</v-card-title>
-          <div class="mb-4">
+        <v-card class="pa-1" color="#16213e">
+          <div class="mb-0">
             <v-row class="pa-2">
               <v-col v-for="(channel, index) in channels" :key="index" cols="auto" class="pa-1">
                 <v-chip :color="channel.color" variant="flat" size="small">
@@ -53,13 +62,10 @@
                 { name: 'W/Y/M', color: '#FF69B4' }
               ]"
               :schedules="lampStore.lampState.schedules"
-              :height="300"
+              :height="240"
               :hover="true"
               :show-now="true"
           />
-          <div class="text-center mt-2" :class="connectionStatus.color">
-            {{ connectionStatus.text }}
-          </div>
         </v-card>
       </v-col>
     </v-row>

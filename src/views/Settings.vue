@@ -13,7 +13,6 @@
               </v-btn>
             </v-col>
             <v-col cols="auto">
-              <!-- Заменили на SVG иконку лампочки -->
               <v-row align="center" no-gutters class="ml-2">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFC107">
                   <path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z"/>
@@ -27,129 +26,67 @@
       </v-col>
     </v-row>
 
-    <WifiSection />
-    <TimeSection />
-    <NtpSection />
-    <DeviceInfoSection />
 
-    <v-row class="ma-1">
-      <v-col cols="12" class="pa-0">
-        <v-card class="pa-2" color="#16213e">
-          <v-card-title class="text-white">Advanced</v-card-title>
-
-          <v-row class="mb-4">
-            <v-col cols="12">
-              <div class="text-white mb-2">Current API Endpoint:</div>
-              <div class="text-success">{{ apiBaseUrl }}</div>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-btn color="warning" @click="rebootDevice" :loading="rebooting" block>
-                Reboot Device
-              </v-btn>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-btn color="warning" @click="showFactoryResetConfirmDialog = true" :loading="resetting" block>
-                Factory Reset
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-dialog v-model="showFactoryResetConfirmDialog" max-width="400">
-      <v-card>
-        <v-card-title class="text-h6">Confirm Factory Reset</v-card-title>
-        <v-card-text>
-          <p>Are you sure you want to reset the device to factory settings?</p>
-          <p>This action cannot be undone.</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="showFactoryResetConfirmDialog = false">Cancel</v-btn>
-          <v-btn color="warning" @click="confirmFactoryReset">Confirm</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-expansion-panels>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="text-white" style="background:#16213e;">
+          WiFi Configuration
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="background:#16213e;" class="pa-0">
+          <WifiSection />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="text-white" style="background:#16213e;">
+          Time
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="background:#16213e;">
+          <TimeSection />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="text-white" style="background:#16213e;">
+          NTP Configuration
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="background:#16213e;">
+          <NtpSection />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="text-white" style="background:#16213e;">
+          Device Information
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="background:#16213e;">
+          <DeviceInfoSection />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="text-white" style="background:#16213e;">
+          Advanced
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="background:#16213e;">
+          <AdvancedSection />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </v-container>
 </template>
 
+<style scoped>
+::v-deep(.v-expansion-panel-text__wrapper) {
+  padding: 4px 8px !important;
+}
+</style>
+
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useDeviceStore } from '../stores/device';
 import pkg from '../../package.json'
 import { useRouter } from 'vue-router'
-import { apiBaseUrl } from '@/utils/api';
 import WifiSection from '@/components/settings/WifiSection.vue'
 import TimeSection from '@/components/settings/TimeSection.vue'
 import NtpSection from '@/components/settings/NtpSection.vue'
 import DeviceInfoSection from '@/components/settings/DeviceInfoSection.vue'
+import AdvancedSection from "@/components/settings/AdvancedSection.vue";
 
 const router = useRouter()
 const version = pkg.version
-const deviceStore = useDeviceStore();
-// const scanning = ref(false)
-const rebooting = ref(false)
-const resetting = ref(false)
-const showFactoryResetConfirmDialog = ref(false)
-
-// const availableNetworks = ref([
-//   { ssid: 'HomeNetwork', signal: -45 },
-//   { ssid: 'OfficeWiFi', signal: -60 },
-//   { ssid: 'GuestNetwork', signal: -75 }
-// ])
-
-// const getSignalColor = (signal: number) => {
-//   if (signal > -50) return '#4CAF50'
-//   if (signal > -70) return '#FF9800'
-//   return '#F44336'
-// }
-//
-// const scanNetworks = async () => {
-//   scanning.value = true
-//   try {
-//     availableNetworks.value = await wifiStore.scanWifiNetworks()
-//   } catch (error) {
-//     console.error('Failed to scan networks:', error)
-//   } finally {
-//     scanning.value = false
-//   }
-// }
-
-
-const rebootDevice = async () => {
-  rebooting.value = true
-  try {
-    await deviceStore.rebootDevice()
-  } catch (error) {
-    console.error('Failed to reboot device:', error)
-  } finally {
-    rebooting.value = false
-  }
-}
-
-const factoryReset = async () => {
-  resetting.value = true
-  try {
-    await deviceStore.factoryReset()
-  } catch (error) {
-    console.error('Failed to reset device:', error)
-  } finally {
-    resetting.value = false
-  }
-}
-
-const confirmFactoryReset = async () => {
-  showFactoryResetConfirmDialog.value = false
-  resetting.value = true
-  try {
-    await factoryReset()
-  } catch (error) {
-    console.error('Failed to reset device:', error)
-  } finally {
-    resetting.value = false
-  }
-}
 </script>
