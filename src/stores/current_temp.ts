@@ -11,6 +11,7 @@ export const useCurrentTempStore = defineStore("current_temp", () => {
   const loader = useResourceLoader<CurrentTemp>({
     getUrl: '/api/temp/current',
     initial: initialState,
+    ttlMs: 5000, // Cache for 5 seconds
   })
 
   return {

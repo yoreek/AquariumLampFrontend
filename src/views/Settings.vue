@@ -27,7 +27,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="red" class="mr-1">
                       <path d="M17 17.75V11.5C17 8.46 14.54 6 11.5 6S6 8.46 6 11.5v6.25C4.83 18.58 4 20.19 4 22h15c0-1.81-0.83-3.42-2-4.25zM11.5 20c-1.38 0-2.5-1.12-2.5-2.5S10.12 15 11.5 15s2.5 1.12 2.5 2.5S12.88 20 11.5 20zM13 11.5V17h-3v-5.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5z"/>
                     </svg>
-                    {{ currentTempStore.state.temperature }}
+                    {{ roundedTemperature }}
                     <span style="font-size: 0.9em;">°C</span>
                   </template>
                   <template v-else>
@@ -120,8 +120,13 @@ import AdvancedSection from "@/components/settings/AdvancedSection.vue";
 import TempSection from "@/components/settings/TempSection.vue";
 import ThermostatSection from "@/components/settings/ThermostatSection.vue";
 import { useCurrentTempStore } from '@/stores/current_temp'
+import { computed } from 'vue'
 
 const router = useRouter()
 const version = pkg.version
 const currentTempStore = useCurrentTempStore()
+
+const roundedTemperature = computed(() => {
+  return currentTempStore.state.temperature ? currentTempStore.state.temperature.toFixed(1) : null
+})
 </script>
