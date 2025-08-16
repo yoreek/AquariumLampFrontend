@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { useDeviceStore } from "./device";
 import { useLampStore } from "./lamp";
+import { useCurrentTempStore} from "@/stores/current_temp";
 
 export const useAppStore = defineStore("app", () => {
   // Actions
@@ -23,6 +24,7 @@ export const useAppStore = defineStore("app", () => {
       try {
         await lampStore.loadLampData()
         await deviceStore.getDeviceInfo()
+        await currentTempStore.load()
       } catch (error) {
         console.log("Auto-refresh failed, device may be offline")
       }
@@ -32,6 +34,7 @@ export const useAppStore = defineStore("app", () => {
 
   const lampStore = useLampStore();
   const deviceStore = useDeviceStore();
+  const currentTempStore = useCurrentTempStore();
 
   return {
     // Actions

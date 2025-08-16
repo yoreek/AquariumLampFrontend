@@ -49,6 +49,29 @@ export interface NtpSettings {
   timezone: string
 }
 
+export interface TempSettings {
+  address: string
+  exp_filter_wight: number
+  approx_factor: number
+  approx_offset: number
+}
+
+export interface CurrentTemp {
+  ready: boolean
+  temperature: number | null
+}
+
+export type FanMode = "auto" | "on" | "off" | "pause"
+
+export interface FanState {
+  mode: FanMode
+}
+
+export interface ThermostatSettings {
+  temperature: number
+  hysteresis: number
+}
+
 export interface TimeSettings {
   date: string
   time: string

@@ -28,6 +28,7 @@ import {
   VExpansionPanelTitle,
   VExpansionPanelText,
 } from 'vuetify/components'
+import { VMaskInput } from 'vuetify/labs/VMaskInput'
 import { Ripple } from 'vuetify/directives'
 export default createVuetify({
   components: {
@@ -56,6 +57,7 @@ export default createVuetify({
     VExpansionPanels,
     VExpansionPanelTitle,
     VExpansionPanelText,
+    VMaskInput,
   },
   directives: {
     Ripple,
@@ -93,6 +95,7 @@ const vuetify = createVuetify({
     VExpansionPanels,
     VExpansionPanelTitle,
     VExpansionPanelText,
+    VMaskInput,
   },
   directives: {
     Ripple,

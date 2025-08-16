@@ -1,35 +1,22 @@
 <template>
   <v-text-field
-      :label="label"
-      variant="outlined"
-      :model-value="inner"
-      :rules="allRules"
-      :hide-details="hideDetails"
-      @update:model-value="v => inner = v"
-  >
-    <!-- Vuetify типов не знает про #control у VTextField, подавим TS -->
-    <!-- @ts-expect-error: VTextField exposes #control at runtime -->
-    <template #control="{ props }">
-      <input-facade
-          v-bind="props"
-          v-model="inner"
-          :mask="'###.###.###.###'"
-          class="v-field__input"
-          type="text"
-          inputmode="numeric"
-          autocomplete="off"
-          spellcheck="false"
-          @blur="onBlur"
-      />
-    </template>
-  </v-text-field>
+    v-model="inner"
+    :label="label"
+    variant="outlined"
+    :rules="allRules"
+    :hide-details="hideDetails"
+    type="text"
+    inputmode="numeric"
+    autocomplete="off"
+    spellcheck="false"
+    @blur="onBlur"
+    full-width
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { InputFacade } from 'vue-input-facade'
 
-/** валидатор IPv4 */
 const ipv4 = (v: string) =>
     /^((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/.test(v || '')
 
@@ -51,16 +38,15 @@ watch(() => props.modelValue, v => {
 })
 watch(inner, v => emit('update:modelValue', v))
 
-/** соберём правила: required? + ipv4 (если не allowEmpty) + пользовательские */
 const allRules = computed(() => {
   const builtins: Array<(v: string) => true|string> = []
   if (!props.allowEmpty) {
-    builtins.push(v => (v && v.trim() !== '') || 'Required')
-    builtins.push(v => ipv4(v) || 'Invalid IPv4 address')
+    builtins.push((v: string) => (v && v.trim() !== '') || 'Required')
+    builtins.push((v: string) => ipv4(v) || 'Invalid IPv4 address')
   } else {
-    builtins.push(v => (!v || ipv4(v)) || 'Invalid IPv4 address')
+    builtins.push((v: string) => (!v || ipv4(v)) || 'Invalid IPv4 address')
   }
-  return props.rules ? [...builtins, ...props.rules] : builtins
+  return [...builtins, ...(props.rules || [])]
 })
 
 function onBlur() {
@@ -69,18 +55,3 @@ function onBlur() {
   }
 }
 </script>
-
-<script lang="ts">
-export default {
-  components: { InputFacade }
-}
-</script>
-
-<style scoped>
-.v-field__input {
-  background: transparent;
-  border: 0;
-  outline: none;
-  width: 100%;
-}
-</style>
