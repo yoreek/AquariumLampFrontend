@@ -61,6 +61,14 @@
       </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-title class="text-white" style="background:#16213e;">
+          MQTT Settings
+        </v-expansion-panel-title>
+        <v-expansion-panel-text style="background:#16213e;">
+          <MqttSection />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="text-white" style="background:#16213e;">
           NTP Configuration
         </v-expansion-panel-title>
         <v-expansion-panel-text style="background:#16213e;">
@@ -120,6 +128,7 @@ import AdvancedSection from "@/components/settings/AdvancedSection.vue";
 import TempSection from "@/components/settings/TempSection.vue";
 import ThermostatSection from "@/components/settings/ThermostatSection.vue";
 import { useCurrentTempStore } from '@/stores/current_temp'
+import MqttSection from "@/components/settings/MqttSection.vue";
 import { computed } from 'vue'
 
 const router = useRouter()

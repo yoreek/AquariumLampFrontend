@@ -12,6 +12,8 @@
               hide-details
           />
         </v-col>
+      </v-row>
+      <v-row v-if="wifiStore.state.ap.enabled">
         <v-col cols="12" md="4">
           <v-text-field
               v-model="wifiStore.state.ap.ssid"
@@ -47,10 +49,12 @@
               hide-details
           />
         </v-col>
+      </v-row>
+      <v-row v-if="sta.enabled">
         <v-col cols="12" md="4">
           <v-text-field
-              v-model="sta.ssid" l
-              abel="SSID"
+              v-model="sta.ssid"
+              label="SSID"
               variant="outlined"
               :rules="[rules.max(32)]"
           />
@@ -62,18 +66,34 @@
           <v-text-field v-model="sta.hostname" label="Hostname" variant="outlined" />
         </v-col>
         <v-col cols="12" md="4">
+          <v-switch
+              v-model="sta.dhcp"
+              label="Auto IP (DHCP)"
+              color="primary"
+              hide-details
+          />
+        </v-col>
+        <v-col cols="12" md="4" v-if="!sta.dhcp">
           <IpInput v-model="sta.ip" label="IP Address" />
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="4" v-if="!sta.dhcp">
           <IpInput v-model="sta.gateway" label="Gateway" />
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="4" v-if="!sta.dhcp">
           <IpInput v-model="sta.subnet" label="Subnet Mask" />
         </v-col>
         <v-col cols="12" md="4">
+          <v-switch
+              v-model="sta.autoDns"
+              label="Auto DNS"
+              color="primary"
+              hide-details
+          />
+        </v-col>
+        <v-col cols="12" md="4" v-if="!sta.autoDns">
           <IpInput v-model="sta.dns1" label="DNS 1" />
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="4" v-if="!sta.autoDns">
           <IpInput v-model="sta.dns2" label="DNS 2" />
         </v-col>
       </v-row>

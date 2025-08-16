@@ -5,6 +5,15 @@ export interface Schedule {
   brightness: number[]
 }
 
+export interface MqttSettings {
+  enabled: boolean,
+  ip: string,
+  port: number,
+  clientId: string,
+  username: string,
+  password: string
+}
+
 export interface WifiApSettings {
   enabled: boolean,
   ssid: string,
@@ -23,7 +32,9 @@ export interface WifiStaSettings {
   gateway: string,
   subnet: string
   dns1: string,
-  dns2: string
+  dns2: string,
+  dhcp: boolean,
+  autoDns: boolean
 }
 
 export interface WifiSettings {

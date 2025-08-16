@@ -23,6 +23,8 @@ const initialState = (): WifiSettings => ({
     subnet: '0.0.0.0',
     dns1: '0.0.0.0',
     dns2: '0.0.0.0',
+    dhcp: true,
+    autoDns: true,
   })),
 })
 
