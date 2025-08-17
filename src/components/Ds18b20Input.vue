@@ -45,3 +45,4 @@ const allRules = computed<((value: string) => true | string)[]>(() => [
   (v: string) => /^([0-9A-F]{2}:){7}[0-9A-F]{2}$/.test(v) || 'Invalid address format'
 ])
 </script>
+

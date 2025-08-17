@@ -13,6 +13,7 @@
             v-model="ntpStore.state.syncInterval"
             label="Sync Interval"
             variant="outlined"
+            suffix="seconds"
         />
       </v-col>
     </v-row>

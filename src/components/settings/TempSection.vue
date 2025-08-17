@@ -2,7 +2,9 @@
   <v-form v-model="valid" ref="form" validate-on="input">
     <v-row class="mb-4">
       <v-col cols="12">
-        <Ds18b20Input v-model="tempStore.state.address" />
+        <OneWireDeviceInput v-model="tempStore.state.address" label="Address" />
+<!--        <OneWireDeviceSelector v-model="tempStore.state.address" />-->
+<!--        <Ds18b20Input v-model="tempStore.state.address" />-->
       </v-col>
     </v-row>
 
@@ -69,6 +71,8 @@
 import { onMounted, ref } from 'vue'
 import { useTempStore } from '@/stores/temp';
 import Ds18b20Input from '@/components/Ds18b20Input.vue'
+import OneWireDeviceSelector from "@/components/OneWireDeviceSelector.vue";
+import OneWireDeviceInput from "@/components/OneWireDeviceInput.vue";
 
 const tempStore = useTempStore();
 

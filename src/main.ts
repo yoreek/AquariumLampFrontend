@@ -27,6 +27,10 @@ import {
   VExpansionPanels,
   VExpansionPanelTitle,
   VExpansionPanelText,
+  VAutocomplete,
+  VList,
+  VMenu,
+  VListItemTitle
 } from 'vuetify/components'
 import { VMaskInput } from 'vuetify/labs/VMaskInput'
 import { Ripple } from 'vuetify/directives'
@@ -58,6 +62,10 @@ export default createVuetify({
     VExpansionPanelTitle,
     VExpansionPanelText,
     VMaskInput,
+    VAutocomplete,
+    VMenu,
+    VList,
+    VListItemTitle
   },
   directives: {
     Ripple,
@@ -88,7 +96,6 @@ const vuetify = createVuetify({
     VChip,
     VSlider,
     VSpacer,
-    VListItem,
     VIcon,
     VForm,
     VExpansionPanel,
@@ -96,6 +103,11 @@ const vuetify = createVuetify({
     VExpansionPanelTitle,
     VExpansionPanelText,
     VMaskInput,
+    VAutocomplete,
+    VMenu,
+    VList,
+    VListItem,
+    VListItemTitle
   },
   directives: {
     Ripple,

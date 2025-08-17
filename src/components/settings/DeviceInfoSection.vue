@@ -43,7 +43,7 @@ onMounted(async () => {
         <div class="text-white">Subnet Mask:</div>
       </v-col>
       <v-col cols="6">
-        <div>{{ deviceStore.deviceInfo.subnet }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.subnet }}</div>
       </v-col>
     </v-row>
 
@@ -52,7 +52,7 @@ onMounted(async () => {
         <div class="text-white">Gateway IP:</div>
       </v-col>
       <v-col cols="6">
-        <div>{{ deviceStore.deviceInfo.gateway }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.gateway }}</div>
       </v-col>
     </v-row>
 
@@ -61,16 +61,16 @@ onMounted(async () => {
         <div class="text-white">MAC Address:</div>
       </v-col>
       <v-col cols="6">
-        <div>{{ deviceStore.deviceInfo.macAddress }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.macAddress }}</div>
       </v-col>
     </v-row>
 
     <v-row>
       <v-col cols="6">
-        <div class="text-white">RSSI:</div>
+        <div class="text-white">Signal Strength (RSSI):</div>
       </v-col>
       <v-col cols="6">
-        <div>{{ deviceStore.deviceInfo.rssi }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.rssi }} <span class="text-secondary">dBm</span></div>
       </v-col>
     </v-row>
 
@@ -97,7 +97,7 @@ onMounted(async () => {
         <div class="text-white">Uptime:</div>
       </v-col>
       <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.uptime || 'Unknown' }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.uptime }}</div>
       </v-col>
     </v-row>
 
@@ -106,7 +106,7 @@ onMounted(async () => {
         <div class="text-white">Heap Size:</div>
       </v-col>
       <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.heapSize }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.heapSize }} <span class="text-secondary">Bytes</span></div>
       </v-col>
     </v-row>
 
@@ -115,7 +115,7 @@ onMounted(async () => {
         <div class="text-white">Heap Usage:</div>
       </v-col>
       <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.heapUsage }} %</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.heapUsage }} <span class="text-secondary">%</span></div>
       </v-col>
     </v-row>
 
@@ -124,7 +124,7 @@ onMounted(async () => {
         <div class="text-white">Max Free Block Size:</div>
       </v-col>
       <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.maxFreeBlockSize }}</div>
+        <div class="text-success">{{ deviceStore.deviceInfo.maxFreeBlockSize }} <span class="text-secondary">Bytes</span></div>
       </v-col>
     </v-row>
 
@@ -133,7 +133,19 @@ onMounted(async () => {
         <div class="text-white">Time:</div>
       </v-col>
       <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.time }}</div>
+        <div class="text-success">
+          <div>{{ new Date(deviceStore.deviceInfo.time).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }) }}</div>
+          <div>{{ new Date(deviceStore.deviceInfo.time).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZoneName: 'short',
+          }) }}</div>
+        </div>
       </v-col>
     </v-row>
 

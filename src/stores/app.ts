@@ -10,8 +10,6 @@ export const useAppStore = defineStore("app", () => {
 
   const refreshData = async () => {
     try {
-      // Try to connect and get initial data
-      await lampStore.loadLampData()
       await deviceStore.getDeviceInfo()
       await currentTempStore.load(true)
       console.log("Date refreshed successfully")
@@ -22,12 +20,19 @@ export const useAppStore = defineStore("app", () => {
 
   const initializeApp = async () => {
     console.log("Initializing app...")
-    await refreshData()
+    try {
+      await lampStore.loadLampData()
+      await deviceStore.getDeviceInfo()
+      await currentTempStore.load(true)
+      console.log("Date refreshed successfully")
+    } catch (error) {
+      console.error("Failed to refresh data:", error)
+    }
   }
 
   // Auto-refresh device data periodically
   const startAutoRefresh = () => {
-    setInterval(refreshData, 5_000)
+    setInterval(refreshData, 30_000)
   }
 
   return {

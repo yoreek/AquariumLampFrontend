@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
-import type { WifiSettings } from "./models";
-// import type { WifiSettings, WifiScanResult, WifiNetwork } from "./models";
-// import { makeApiCall, deepClone } from "./utils";
+import type { WifiSettings, WifiScanResult } from "./models";
+import { makeApiCall } from "@/utils/api";
 import { useResourceLoader } from '@/composables/useResourceLoader'
 
 const initialState = (): WifiSettings => ({
@@ -36,28 +35,27 @@ export const useWifiStore = defineStore("wifi", () => {
   })
 
 
-  // const scanWifiNetworks = async (): Promise<WifiNetwork[]> => {
-  //   console.log("Scanning WiFi networks...")
-  //   try {
-  //     const response: WifiScanResult = await makeApiCall("/api/wifi/scan")
-  //     return response.networks || []
-  //   } catch (error) {
-  //     console.error("Failed to scan WiFi networks:", error)
-  //     throw error
-  //   }
-  // }
-  //
-  // const startScanWifiNetworks = async () => {
-  //   console.log("Start scanning WiFi networks...")
-  //   try {
-  //     await makeApiCall("/api/wifi/scan", {
-  //       method: "POST"
-  //     })
-  //   } catch (error) {
-  //     console.error("Failed to start scan Wi-Fi networks:", error)
-  //     throw error
-  //   }
-  // }
+  const scanWifiNetworks = async (): Promise<WifiScanResult> => {
+    console.log("Scanning WiFi networks...")
+    try {
+      return await makeApiCall("/api/wifi/scan")
+    } catch (error) {
+      console.error("Failed to scan WiFi networks:", error)
+      throw error
+    }
+  }
+
+  const startScanWifiNetworks = async () => {
+    console.log("Start scanning WiFi networks...")
+    try {
+      await makeApiCall("/api/wifi/scan", {
+        method: "POST"
+      })
+    } catch (error) {
+      console.error("Failed to start scan Wi-Fi networks:", error)
+      throw error
+    }
+  }
 
   return {
     state: loader.data,
@@ -65,7 +63,7 @@ export const useWifiStore = defineStore("wifi", () => {
     reset: loader.resetToSnapshot,
     load: loader.load,
     save: loader.save,
-    // scanWifiNetworks,
-    // startScanWifiNetworks
+    scanWifiNetworks,
+    startScanWifiNetworks
   };
 });

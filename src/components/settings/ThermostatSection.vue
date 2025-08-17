@@ -24,6 +24,7 @@
             v-model="thermostatStore.state.temperature"
             label="Temperature"
             variant="outlined"
+            suffix="°C"
         />
       </v-col>
     </v-row>
@@ -35,6 +36,7 @@
             v-model="thermostatStore.state.hysteresis"
             label="Hysteresis"
             variant="outlined"
+            suffix="°C"
         />
       </v-col>
     </v-row>

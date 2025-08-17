@@ -113,6 +113,12 @@ export interface LampState {
   schedules: Schedule[]
 }
 
+export interface OneWireDeviceScanResult {
+  inProgress: boolean,
+  completed: boolean,
+  devices: string[]
+}
+
 export interface AppSettings {
   wifi: WifiSettings
   time: TimeSettings
