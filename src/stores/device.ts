@@ -7,6 +7,7 @@ export const useDeviceStore = defineStore("device", () => {
   const deviceInfo = ref<DeviceInfo>({
     connected: false,
     firmware: "",
+    reefduino: "",
     ip: "",
     subnet: "",
     gateway: "",

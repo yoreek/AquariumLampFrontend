@@ -91,6 +91,7 @@ export interface TimeSettings {
 export interface DeviceInfo {
   connected: boolean
   firmware: string
+  reefduino: string
   ip: string
   subnet: string
   gateway: string

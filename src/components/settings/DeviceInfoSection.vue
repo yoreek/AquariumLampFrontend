@@ -85,6 +85,15 @@ onMounted(async () => {
 
     <v-row>
       <v-col cols="6">
+        <div class="text-white">ReefDuino Version:</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="text-success">{{ deviceStore.deviceInfo.reefduino || 'Unknown' }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="6">
         <div class="text-white">Uptime:</div>
       </v-col>
       <v-col cols="6">
