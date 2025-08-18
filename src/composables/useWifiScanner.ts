@@ -18,13 +18,9 @@ export function useWifiScanner() {
     const pollScanResults = async () => {
       while (Date.now() - startTime < 30000) { // Limit to 30 seconds
         const result: WifiScanResult = await wifiStore.scanWifiNetworks();
-        const lastUpdated = new Date(result.lastUpdatedAt); // Convert to Date object
-        const now = new Date();
-        const isRecent = (now.getTime() - lastUpdated.getTime()) / 1000 <= 30;
-
-        if (result.scanning) {
+        if (result.inProgress) {
           await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-        } else if (isRecent) {
+        } else if (result.isReady) {
           networks.value = result.networks;
           scanStatus.value = `Found ${result.networks.length} networks.`;
           scanning.value = false;

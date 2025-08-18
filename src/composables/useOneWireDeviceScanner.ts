@@ -21,7 +21,7 @@ export function useOneWireDeviceScanner() {
 
         if (result.inProgress) {
           await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-        } else if (result.completed) {
+        } else if (result.isReady) {
           devices.value = result.devices;
           scanStatus.value = `Found ${result.devices.length} devices.`;
           scanning.value = false;

@@ -49,8 +49,8 @@ export interface WifiNetwork {
 }
 
 export interface WifiScanResult {
-  scanning: boolean,
-  lastUpdatedAt: string,
+  inProgress: boolean,
+  isReady: boolean,
   networks: WifiNetwork[]
 }
 
@@ -115,7 +115,7 @@ export interface LampState {
 
 export interface OneWireDeviceScanResult {
   inProgress: boolean,
-  completed: boolean,
+  isReady: boolean,
   devices: string[]
 }
 
