@@ -85,6 +85,23 @@
       </v-col>
     </v-row>
 
+    <v-row>
+      <v-col cols="12" class="pl-4" md="6">
+        <v-btn-toggle
+            v-model="lampStore.lampState.mode"
+            color="primary"
+            mandatory
+            @update:model-value="updateLampMode"
+            class="pa-1"
+            density="compact"
+            size="small"
+        >
+          <v-btn value="scheduled" size="small">Scheduled</v-btn>
+          <v-btn value="manual" size="small">Manual</v-btn>
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
+
     <!-- Manual Control -->
     <v-row class="mt-1">
       <v-col cols="12" class="pt-0">
@@ -116,18 +133,6 @@
                 </v-col>
               </v-row>
             </v-col>
-            <v-col cols="12" md="4">
-              <div class="text-white mb-2">Mode</div>
-              <v-btn-toggle
-                  v-model="lampStore.lampState.mode"
-                  color="primary"
-                  mandatory
-                  @update:model-value="updateLampMode"
-              >
-                <v-btn value="scheduled" size="small">Scheduled</v-btn>
-                <v-btn value="manual" size="small">Manual</v-btn>
-              </v-btn-toggle>
-            </v-col>
           </v-row>
         </v-card>
       </v-col>
@@ -140,6 +145,16 @@
           <v-card-title class="text-white">
             Schedule Settings
           </v-card-title>
+          <v-row>
+            <v-col cols="12">
+              <v-btn class="v-btn" @click="exportSettings" color="primary">
+                Export
+              </v-btn>
+              <v-btn class="v-btn" @click="importSettings" color="primary">
+                Import
+              </v-btn>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col v-for="(schedule, index) in lampStore.lampState.schedules" :key="`schedule-${index}-${componentKey}`" cols="12" md="6" xl="4">
               <v-card class="pa-3 mb-3" color="#0f1419">
@@ -210,14 +225,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useLampStore } from '../stores/lamp';
+import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {useLampStore} from '../stores/lamp';
 import pkg from '../../package.json'
-import { LampMode } from "@/stores/models.ts";
-import { useRouter } from 'vue-router'
-import { useDeviceStore } from "@/stores/device.ts";
+import {LampMode} from "@/stores/models.ts";
+import {useRouter} from 'vue-router'
+import {useDeviceStore} from "@/stores/device.ts";
 import ChartBrightness from "@/components/ChartBrightness.vue";
-import { useCurrentTempStore } from '@/stores/current_temp'
+import {useCurrentTempStore} from '@/stores/current_temp'
+import { saveAs } from 'file-saver';
 
 const router = useRouter()
 
@@ -243,13 +259,6 @@ const channels = [
   { name: 'White/Yellow/Magenta', color: '#FF69B4' } // Розово-пурпурный (Hot Pink)
 ]
 
-const connectionStatus = computed(() => {
-  if (deviceStore.deviceInfo.connected) {
-    return { text: 'Connected to ESP32', color: 'text-green' }
-  }
-  return { text: 'Disconnected - Check ESP32 connection', color: 'text-red' }
-})
-
 let timeInterval: NodeJS.Timeout
 
 const debounceTimers = ref<{ [key: string]: NodeJS.Timeout }>({})
@@ -263,13 +272,11 @@ const updateDateTime = () => {
   //   day: 'numeric'
   // })
 
-  const timeStr = now.toLocaleTimeString('en-US', {
+  currentDateTime.value = now.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit'
   })
-
-  currentDateTime.value = timeStr
   // currentDateTime.value = `${dateStr}, ${timeStr}`
 }
 
@@ -322,6 +329,40 @@ const updateSchedule = (index: number) => {
     }
   }, 500)
 }
+
+const exportSettings = () => {
+  const schedules = lampStore.lampState.schedules;
+  const blob = new Blob([JSON.stringify(schedules, null, 2)], { type: 'application/json' });
+  saveAs(blob, 'schedules.json');
+};
+
+const importSettings = async () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+  input.onchange = async (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const text = await file.text();
+      try {
+        const importedSchedules = JSON.parse(text);
+
+        // Update schedules using the updateSchedule method
+        for (let i = 0; i < importedSchedules.length; i++) {
+          const schedule = importedSchedules[i];
+          if (i < lampStore.lampState.schedules.length) {
+            await lampStore.updateSchedule(i, schedule);
+          }
+        }
+
+        console.log('Schedules imported and updated successfully:', importedSchedules);
+      } catch (error) {
+        console.error('Failed to import schedules:', error);
+      }
+    }
+  };
+  input.click();
+};
 
 onMounted(() => {
   updateDateTime()

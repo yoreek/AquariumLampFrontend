@@ -9,7 +9,7 @@
     </v-row>
 
     <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-text-field
             type="number"
             v-model="tempStore.state.exp_filter_wight"
@@ -17,10 +17,7 @@
             variant="outlined"
         />
       </v-col>
-    </v-row>
-
-    <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-text-field
             type="number"
             v-model="tempStore.state.approx_factor"
@@ -28,10 +25,7 @@
             variant="outlined"
         />
       </v-col>
-    </v-row>
-
-    <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-text-field
             type="number"
             v-model="tempStore.state.approx_offset"
@@ -70,8 +64,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useTempStore } from '@/stores/temp';
-import Ds18b20Input from '@/components/Ds18b20Input.vue'
-import OneWireDeviceSelector from "@/components/OneWireDeviceSelector.vue";
 import OneWireDeviceInput from "@/components/OneWireDeviceInput.vue";
 
 const tempStore = useTempStore();

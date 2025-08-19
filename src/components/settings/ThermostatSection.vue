@@ -18,7 +18,7 @@
     </v-row>
 
     <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12"  md="6">
         <v-text-field
             type="number"
             v-model="thermostatStore.state.temperature"
@@ -27,10 +27,7 @@
             suffix="°C"
         />
       </v-col>
-    </v-row>
-
-    <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="6">
         <v-text-field
             type="number"
             v-model="thermostatStore.state.hysteresis"

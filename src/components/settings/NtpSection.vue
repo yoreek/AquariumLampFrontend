@@ -1,13 +1,10 @@
 <template>
   <v-form v-model="valid" ref="form" validate-on="input">
     <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-text-field v-model="ntpStore.state.server" label="NTP Server" variant="outlined" />
       </v-col>
-    </v-row>
-
-    <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-text-field
             type="number"
             v-model="ntpStore.state.syncInterval"
@@ -16,9 +13,7 @@
             suffix="seconds"
         />
       </v-col>
-    </v-row>
-    <v-row class="mb-4">
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-select
             v-model="ntpStore.state.timezone"
             :items="timezones"
