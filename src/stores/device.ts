@@ -6,6 +6,9 @@ import { makeApiCall } from "@/utils/api";
 export const useDeviceStore = defineStore("device", () => {
   const deviceInfo = ref<DeviceInfo>({
     connected: false,
+    name: "",
+    copyright: "",
+    license: "",
     firmware: "",
     reefduino: "",
     ip: "",

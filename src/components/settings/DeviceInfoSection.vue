@@ -76,24 +76,6 @@ onMounted(async () => {
 
     <v-row>
       <v-col cols="6">
-        <div class="text-white">Firmware Version:</div>
-      </v-col>
-      <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.firmware || 'Unknown' }}</div>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="6">
-        <div class="text-white">ReefDuino Version:</div>
-      </v-col>
-      <v-col cols="6">
-        <div class="text-success">{{ deviceStore.deviceInfo.reefduino || 'Unknown' }}</div>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="6">
         <div class="text-white">Uptime:</div>
       </v-col>
       <v-col cols="6">
@@ -155,6 +137,51 @@ onMounted(async () => {
       </v-col>
       <v-col cols="6">
         <div class="text-success">{{ deviceStore.deviceInfo.timezone }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="6">
+        <div class="text-white">Device Name:</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="text-success">{{ deviceStore.deviceInfo.name || 'Unknown' }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="6">
+        <div class="text-white">Copyright:</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="text-success">{{ deviceStore.deviceInfo.copyright || 'Unknown' }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="6">
+        <div class="text-white">License:</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="text-success">{{ deviceStore.deviceInfo.license || 'Unknown' }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="6">
+        <div class="text-white">Firmware Version:</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="text-success">{{ deviceStore.deviceInfo.firmware || 'Unknown' }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="6">
+        <div class="text-white">ReefDuino Version:</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="text-success">{{ deviceStore.deviceInfo.reefduino || 'Unknown' }}</div>
       </v-col>
     </v-row>
 

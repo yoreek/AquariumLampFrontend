@@ -90,6 +90,9 @@ export interface TimeSettings {
 
 export interface DeviceInfo {
   connected: boolean
+  name: string
+  copyright: string
+  license: string
   firmware: string
   reefduino: string
   ip: string
