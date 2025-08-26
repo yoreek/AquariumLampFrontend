@@ -78,7 +78,7 @@ export interface FanState {
   mode: FanMode
 }
 
-export interface ThermostatSettings {
+export interface CoolingManagerSettings {
   temperature: number
   hysteresis: number
 }

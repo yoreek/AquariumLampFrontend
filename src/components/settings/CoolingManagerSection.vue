@@ -21,7 +21,7 @@
       <v-col cols="12"  md="6">
         <v-text-field
             type="number"
-            v-model="thermostatStore.state.temperature"
+            v-model="coolingManagerStore.state.temperature"
             label="Temperature"
             variant="outlined"
             suffix="°C"
@@ -30,7 +30,7 @@
       <v-col cols="12" md="6">
         <v-text-field
             type="number"
-            v-model="thermostatStore.state.hysteresis"
+            v-model="coolingManagerStore.state.hysteresis"
             label="Hysteresis"
             variant="outlined"
             suffix="°C"
@@ -44,18 +44,18 @@
             color="success"
             block
             :loading="saving"
-            :disabled="!valid || !thermostatStore.isDirty"
+            :disabled="!valid || !coolingManagerStore.isDirty"
             @click="onSave"
         >
-          Save Thermostat Configuration
+          Save Cooling Manager Configuration
         </v-btn>
       </v-col>
       <v-col cols="12" md="6">
         <v-btn
             color="default"
             block
-            :disabled="!thermostatStore.isDirty"
-            @click="thermostatStore.reset()"
+            :disabled="!coolingManagerStore.isDirty"
+            @click="coolingManagerStore.reset()"
         >
           Reset
         </v-btn>
@@ -66,11 +66,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useThermostatStore } from '@/stores/thermostat';
+import { useCoolingManagerStore } from '@/stores/cooling_manager';
 import { useFanStateStore} from "@/stores/fan_state.ts";
-import {FanMode, LampMode} from "@/stores/models.ts";
 
-const thermostatStore = useThermostatStore();
+const coolingManagerStore = useCoolingManagerStore();
 const fanStateStore = useFanStateStore();
 
 const saving = ref(false)
@@ -82,7 +81,7 @@ async function onSave() {
   if (!res?.valid) return
   try {
     saving.value = true
-    await thermostatStore.save()
+    await coolingManagerStore.save()
     form.value?.resetValidation()
   } finally {
     saving.value = false
@@ -98,7 +97,7 @@ const updateFanMode = async () => {
 }
 
 onMounted(() => {
-  thermostatStore.load()
+  coolingManagerStore.load()
   fanStateStore.load()
 })
 </script>

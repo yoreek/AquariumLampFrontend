@@ -85,10 +85,10 @@
       </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-title class="text-white" style="background:#16213e;">
-          Thermostat Configuration
+          Cooling Manager Configuration
         </v-expansion-panel-title>
         <v-expansion-panel-text style="background:#16213e;">
-          <ThermostatSection />
+          <CoolingManagerSection />
         </v-expansion-panel-text>
       </v-expansion-panel>
       <v-expansion-panel>
@@ -126,10 +126,10 @@ import NtpSection from '@/components/settings/NtpSection.vue'
 import DeviceInfoSection from '@/components/settings/DeviceInfoSection.vue'
 import AdvancedSection from "@/components/settings/AdvancedSection.vue";
 import TempSection from "@/components/settings/TempSection.vue";
-import ThermostatSection from "@/components/settings/ThermostatSection.vue";
 import { useCurrentTempStore } from '@/stores/current_temp'
 import MqttSection from "@/components/settings/MqttSection.vue";
 import { computed } from 'vue'
+import CoolingManagerSection from "@/components/settings/CoolingManagerSection.vue";
 
 const router = useRouter()
 const version = pkg.version

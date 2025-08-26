@@ -1,6 +1,6 @@
 {
-  "name": "aquarium-lamp-manager",
-  "version": "1.0.15",
+  "name": "aquarium-lamp-frontend",
+  "version": "1.0.16",
   "type": "module",
   "private": true,
   "scripts": {
